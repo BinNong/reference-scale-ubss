@@ -21,6 +21,11 @@ r"""R10e：数据集合规声明（Data / Code / Ethics / Competing interests / 
      会触发 "new 含 old" 的幂等护栏；且编号 [1]..[28] 本就**不是引用顺序**（[27] 在正文 L25
      就已出现），追加两号不打乱任何既有编号，`verify_r6` 的 [27]/[28] 断言不受影响。
 
+**注**：`SEC_DECL` 里的 Funding 一项取的是**终态**（无资助的正式声明，由 R11
+`apply_r11_funding.py` 定稿）。R10e 首次落稿时它是占位符，R11 才替换成正式声明；
+两边对齐后，R10e 从零重跑即产出终态，R11 则因 `new in s` 成立而自动跳过——**脚本链保持幂等**。
+（`verify_r10` 的 G 组也已同步为"占位符已清除"。）
+
 用法：
     python3 src/apply_r10e_declarations.py --dry
     python3 src/apply_r10e_declarations.py
@@ -54,7 +59,8 @@ institutional ethics approval is not applicable.
 
 **Competing interests.** The authors declare no competing interests.
 
-**Funding.** [funding information to be inserted]"""
+**Funding.** The authors declare that no funds, grants, or other support were received
+during the preparation, study or publication of this article."""
 
 E = [
     (
@@ -153,7 +159,7 @@ def main() -> None:
                   "OpenSLR SLR70 [29]",
                   "[29] Google",
                   '[30] OpenSLR, "Room impulse response',
-                  "[funding information to be inserted]"):
+                  "**Funding.** The authors declare that no funds, grants, or other support"):
         ok = probe in t
         print(f"  {'OK  ' if ok else 'FAIL'} {probe[:60]}")
         if not ok:

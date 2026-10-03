@@ -589,7 +589,7 @@ def verify_pdf(pdf: Path, d: dict) -> list[str]:
     for pat, what in ((r"%%%R\d+%%%", "%%%R#%%% 标记"),
                       (r"ZZBIB\d+ZZ", "ZZBIB#ZZ 标记"),
                       (r"\@\@", "@@ 占位符")):
-        if re.search(pat, txt):
+        if re.search(pat, flat):
             bad.append(f"成品里残留 {what}")
 
     # 1b) 投稿前的草稿痕迹：这三类一旦留在成品里，就是"unfinished draft"的证据
@@ -599,7 +599,7 @@ def verify_pdf(pdf: Path, d: dict) -> list[str]:
                       (r"add campus/city", "单位占位符 `[add campus/city if required]`"),
                       (r"To be filled", "作者/单位占位符 `[To be filled]`"),
                       (r"\bTODO\b", "TODO 标记")):
-        if re.search(pat, txt, re.I):
+        if re.search(pat, flat, re.I):
             bad.append(f"投稿前必须处理：{what}")
 
     # 2) markdown 语法不该漏成字面量（算法块里的 F*T 之类是合法星号，故只认"字母/空格/连字符"夹心）

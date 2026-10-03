@@ -60,6 +60,9 @@ E = [
         "附录：新增 §A.20 + Table 45（插在 §A.19 之后）",
         r"The record is `r10_gram_spectrum.json`." + "\n\n" + "## Figures",
         r"The record is `r10_gram_spectrum.json`." + "\n\n" + SEC_A20 + "\n\n" + "## Figures",
+        # ⚠️ 第 4 元素＝短签名：R10e 已在本条 new 的 §A.20 中插入 `[29]`（SLR70 的引用号），
+        #    完整 new 不再逐字存在，故用签名判"已完成"（与 apply_r10b 同一处理）。
+        "### A.20 A second corpus",
     ),
     (
         "§7 可用性清单：点名第二个语料的两个归档",
@@ -84,10 +87,15 @@ def main() -> None:
     p = pathlib.Path(a.manuscript) if a.manuscript else MS
     s = p.read_text()
     changed = skipped = missing = 0
-    for tag, old, new in E:
+    for item in E:
+        tag, old, new = item[0], item[1], item[2]
+        # 第 4 元素可选：判"已完成"的**短签名**（默认 = 整段 new）。
+        # R10e 在本条 new 中间插了 `[29]`（§A.20 的 SLR70 引用号），完整 new 会失效而
+        # 效果仍在，故条目 3 用签名——与 apply_r10b 同一处理。
+        sig = item[3] if len(item) > 3 else new
         n = s.count(old)
         if n == 0:
-            if new in s:
+            if sig in s:
                 print(f"  [已改，跳过] {tag}")
                 skipped += 1
                 continue

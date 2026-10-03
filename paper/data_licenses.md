@@ -51,13 +51,30 @@
 
 参考文献新增 **[29] SLR70**、**[30] SLR28** 两条（署名是许可义务，不只是学术惯例）。
 
-## 四、投稿前仍需人工处理
+## 四、仓库与投稿状态（2026-10-03）
 
-| 项 | 位置 | 说明 |
-|---|---|---|
-| 仓库地址 | §7 与 Declarations 的 `[repository to be inserted]` | 匿名版自动替换为 "an anonymised repository…"；正式版需填真实地址 |
-| 基金信息 | Declarations 的 `[funding information to be inserted]` | **需老师提供**；若无基金可写 "received no specific funding" |
-| 单位补充 | `[add campus/city if required]` | 视需要 |
+**代码与记录仓库（已发布、公开）：**
 
-> 上述占位符会让 `build_pdf.py` 以非零码退出并在"成品校验"里点名，属**有意设计**——
-> 防止草稿痕迹悄悄留在投稿版里。
+> **https://github.com/BinNong/reference-scale-ubss**
+
+仓库含 **200 个文件 / 8.6 MB**：`src/`(107) `results/`(59：48 个记录 + 11 张矢量图)
+`legacy/`(25) `scripts/`(4)，加 `README.md`、`requirements.txt`、`.gitignore`、
+`.gitattributes`、本文件。**不含语料、不含手稿、不含评审材料**——与稿件中
+"No corpus is redistributed with this paper" 的声明一致。
+
+**已处理完的投稿前项**：
+
+| 项 | 状态 |
+|---|---|
+| 仓库地址 | ✅ 已注入 §7 与 Declarations（构建时用 `--repo <URL>`） |
+| 基金信息 | ✅ 手稿已写 "no funds, grants, or other support were received" |
+| 评审模式 | ✅ **单盲**（single-anonymous）→ 正文**保留**作者信息，不做匿名化 |
+
+> 构建命令（两个成品都要带 `--repo`）：
+> ```bash
+> python3 src/build_pdf.py      --repo https://github.com/BinNong/reference-scale-ubss
+> python3 src/build_pdf_cssp.py --repo https://github.com/BinNong/reference-scale-ubss
+> ```
+> 两个构建器都会在成品里回查 `[repository to be inserted]`、`[funding information to be inserted]`、
+> `[add campus/city if required]` 等草稿痕迹，命中即以非零码退出——**有意设计**，
+> 防止占位符悄悄留在投稿版里。

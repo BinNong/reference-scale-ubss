@@ -3,10 +3,17 @@
 
 CSSP = Circuits, Systems and Signal Processing（Springer US，ISSN 0278-081X）。
 
+**评审模式：单盲（single-anonymous）** —— 2026-10-03 由 Springer 官方两页确证：
+`journal/34/ethics-and-disclosures` 明写 "peer reviewed (single-anonymous)"；
+`journal/34/submission-guidelines` 要求 **title page 含作者姓名/单位/通讯邮箱**。
+故**默认不匿名**，作者信息照常排在首页；`--anon` 保留给将来投双盲刊时使用
+（那时才清空作者块、并把仓库地址换成中性表述）。
+
 与 build_pdf.py 的分工：**复用**它的解析 / 表格改写 / pandoc / xelatex 编译 / 成品
 反向校验（`import build_pdf as B`），只覆盖 CSSP 特有的两处：
 
-  1. **匿名化** —— CSSP 为双盲评审，作者姓名 / 单位 / 通讯邮箱不得出现在稿件正文，
+  1. **匿名化（仅 `--anon`）** —— CSSP 是**单盲**（见上），默认**保留**作者信息；
+     只有将来投双盲刊时才把作者姓名 / 单位 / 通讯邮箱从正文清掉、
      改由单独的 title page（`paper/cssp_title_page.md`）承载。
   2. **参考文献 IEEE → Springer 风格** —— 原稿为 IEEE（标题带引号、vol./no./pp.）；
      Springer Basic 为 `Author A, Author B (YEAR) Title. Journal V(N):P–Q`。
@@ -188,12 +195,13 @@ def anonymise(d: dict) -> dict:
 # --------------------------------------------------------------------- LaTeX 写出（匿名标题页）
 def write_tex_cssp(d: dict, body_tex: str, bibitems: str, abstract_tex: str,
                    fonts: tuple[str, str], half: bool) -> str:
-    """与 build_pdf.write_tex 相同，只有标题页换成匿名版（双盲投稿）。"""
+    """与 build_pdf.write_tex 相同；仅当作者信息为空（`--anon`）时才省略标题页的作者块。"""
+    author = f"\n\\author{{{B.author_block(d)}}}" if d.get("authors") else ""
     return rf"""{B.preamble(*fonts)}
 
 {B.hypersetup(d)}
 
-\title{{\large\bfseries {d['title']}}}
+\title{{\large\bfseries {d['title']}}}{author}
 \date{{}}
 
 \begin{{document}}
@@ -220,34 +228,38 @@ def write_tex_cssp(d: dict, body_tex: str, bibitems: str, abstract_tex: str,
 
 
 # --------------------------------------------------------------------- CSSP 专有校验
-def verify_cssp(pdf: Path, d: dict) -> list[str]:
-    """在 build_pdf 的成品校验之外，补两条 CSSP 专有判据。"""
+def verify_cssp(pdf: Path, d: dict, anon: bool = False) -> list[str]:
+    """在 build_pdf 的成品校验之外，补两条 CSSP 专有判据。
+
+    `anon=True`（即 `--anon`）时才回查"匿名版里不得出现作者信息"——
+    单盲的默认版本本来就把作者信息排在第一页。
+    """
     bad = list(B.verify_pdf(pdf, d))
     txt = B.subprocess.run(["pdftotext", "-layout", str(pdf), "-"],
                            capture_output=True, text=True).stdout
     flat = re.sub(r"\s+", " ", txt)
 
-    # 1) 匿名性：双盲稿里不得出现作者身份信息
-    # 模式从**手稿头部**动态构造：本仓库是公开的，不把真实姓名/邮箱/单位写进脚本。
-    # 匿名化本身由 anonymise() 做；这里只是"匿名版成品里不该再出现它们"的防御性回查。
-    src = MS.read_text()
-    au = re.search(r"(?m)^\*\*Authors:\*\*\s*(.+)$", src)
-    af = re.search(r"(?m)^\*\*Affiliation:\*\*\s*(.+)$", src)
-    co = re.search(r"(?m)^\*\*Corresponding author:\*\*\s*(.+)$", src)
-    ident: list[tuple[str, str]] = []
-    if au:
-        for nm in re.split(r",|\s+and\s+", au.group(1)):
-            if nm.strip():
-                ident.append((re.escape(nm.strip()), "作者姓名"))
-    if af and af.group(1).strip():
-        ident.append((re.escape(af.group(1).strip()), "单位"))
-    if co:
-        mm = re.search(r"[\w.+-]+@[\w.-]+\.\w+", co.group(1))
-        if mm:
-            ident.append((re.escape(mm.group(0)), "通讯邮箱"))
-    for pat, what in ident:
-        if re.search(pat, flat, re.I):
-            bad.append(f"匿名性：正文里出现{what}（双盲稿不该有）")
+    # 1) 匿名性：**仅 `--anon` 时**回查（单盲默认版的第一页就有作者信息）
+    if anon:
+        # 模式从**手稿头部**动态构造：本仓库是公开的，不把真实姓名/邮箱/单位写进脚本。
+        src = MS.read_text()
+        au = re.search(r"(?m)^\*\*Authors:\*\*\s*(.+)$", src)
+        af = re.search(r"(?m)^\*\*Affiliation:\*\*\s*(.+)$", src)
+        co = re.search(r"(?m)^\*\*Corresponding author:\*\*\s*(.+)$", src)
+        ident: list[tuple[str, str]] = []
+        if au:
+            for nm in re.split(r",|\s+and\s+", au.group(1)):
+                if nm.strip():
+                    ident.append((re.escape(nm.strip()), "作者姓名"))
+        if af and af.group(1).strip():
+            ident.append((re.escape(af.group(1).strip()), "单位"))
+        if co:
+            mm = re.search(r"[\w.+-]+@[\w.-]+\.\w+", co.group(1))
+            if mm:
+                ident.append((re.escape(mm.group(0)), "通讯邮箱"))
+        for pat, what in ident:
+            if re.search(pat, flat, re.I):
+                bad.append(f"匿名性：正文里出现{what}（双盲稿不该有）")
 
     # 2) 参考文献格式：不该再有 IEEE 痕迹
     for pat, what in ((r"\bvol\.\s*\d", "IEEE 的 `vol.` 标记"),
@@ -263,6 +275,9 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--refs", action="store_true", help="只打印参考文献转换结果，供核对")
     ap.add_argument("--repo", default=None, help="代码/数据仓库地址；不给则保留占位符")
+    ap.add_argument("--anon", action="store_true",
+                    help="双盲专用：清空作者信息并把仓库地址换成中性表述"
+                         "（CSSP 是单盲，默认不要开）")
     ap.add_argument("--spacing", choices=["half", "single"], default="half")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
@@ -283,10 +298,15 @@ def main() -> None:
         return
     d["refs"] = conv
 
-    d["body"] = d["body"].replace("[repository to be inserted]", a.repo or ANON_REPO)
+    # CSSP 是单盲：默认保留作者信息与真实仓库地址；只有 --anon 才做双盲处理。
+    if a.repo:
+        d["body"] = d["body"].replace("[repository to be inserted]", a.repo)
+    elif a.anon:
+        d["body"] = d["body"].replace("[repository to be inserted]", ANON_REPO)
     d["body"] = collapse_ranges(d["body"])
 
-    d = anonymise(d)
+    if a.anon:
+        d = anonymise(d)
 
     body_md, tnums, specs = B.build_body_md(d)
     if tnums != list(range(1, len(tnums) + 1)):
@@ -339,13 +359,14 @@ def main() -> None:
           f"{len(d['keywords'].split(';'))} 个")
     print("模板  ：article（本机 TeX Live basic 缺 sn-jnl 依赖；官方模板见 paper/springer_template/）")
 
-    problems = verify_cssp(out, d)
+    problems = verify_cssp(out, d, a.anon)
     if problems:
         print(f"成品校验：发现 {len(problems)} 个问题")
         for x in problems:
             print("   ✗ " + x)
         raise SystemExit(2)
-    print("成品校验：表号/图号/锚点/文献条目 + 匿名性 + 非 IEEE 格式，全部通过")
+    scope = "匿名性（--anon）" if a.anon else "单盲默认版，作者信息保留在首页"
+    print(f"成品校验：表号/图号/锚点/文献条目 + {scope} + 非 IEEE 格式，全部通过")
 
 
 if __name__ == "__main__":
