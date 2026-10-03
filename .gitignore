@@ -29,6 +29,13 @@ __pycache__/
 # Springer 官方模板：第三方材料（版权归 Springer），复现用不到
 /paper/springer_template/
 
+# 投稿用 LaTeX 源文件包（含手稿全文与图）：投稿材料，不公开
+/paper/submission_latex/
+# 投稿上传包（含手稿全文、图与投稿信）：投稿材料，不公开
+/paper/submission/
+# title page 的内部说明（含投稿策略与待办）：内部材料，不公开
+/paper/cssp_title_page_notes.md
+
 # 含完整作者块（姓名 / 单位 / 邮箱）的改稿脚本：改写成通用形式会破坏其可重放性，
 # 且它们离开手稿本来就无法运行，故整文件排除。
 /src/apply_referee_fixes.py
