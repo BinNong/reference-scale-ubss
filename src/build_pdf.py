@@ -529,11 +529,18 @@ def corr_tex(corr: str) -> str:
 
 
 def author_block(d: dict) -> str:
-    """标题页的作者块：姓名 / 单位 / 通讯作者（含邮箱）。"""
+    """标题页的作者块：姓名 / 单位 / 通讯作者（含邮箱）。
+
+    ⚠️ 必须整体包进 `\\parbox`。`article.cls` 的 `\\maketitle` 把 `\\@author` 放进
+    `\\begin{tabular}[t]{c}` —— 表格单元格**不换行**，每行取自然宽度。旧版单位只有一行
+    短句（74 字符）时刚好没溢出；两位作者各带单位后（约 200 字符）整行直接冲出页面：
+    实测 Overfull 429pt，成品首页的邮箱被裁成 `nongbin@tfswuf`（`e.edu.cn` 掉到纸外）。
+    包进限宽的 `\\parbox` 后按词换行，`\\\\` 也从"表格行"退化为"段落内换行"。
+    """
     lines = [re.sub(r"[.,]\s*$", "", d["authors"]), r"\small " + d["affil"]]
     if d["corr"]:
         lines.append(r"\small Corresponding author: " + corr_tex(d["corr"]))
-    return (r"\\[2pt]" + "\n").join(lines)
+    return r"\parbox{0.9\textwidth}{\centering " + (r"\\[2pt]" + "\n").join(lines) + "}"
 
 
 def write_tex(d: dict, body_tex: str, bibitems: str, abstract_tex: str,

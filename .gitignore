@@ -40,6 +40,7 @@ __pycache__/
 # 且它们离开手稿本来就无法运行，故整文件排除。
 /src/apply_referee_fixes.py
 /src/apply_r3_fixes.py
+/src/apply_r12_authors.py
 
 # ---- 助手工作区 ----
 /.workbuddy/

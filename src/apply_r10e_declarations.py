@@ -50,8 +50,8 @@ Section 7, from which every table and figure can be regenerated once the corpora
 obtained from their hosts.
 
 **Code availability.** The code, the fixed configurations, the dependency list and every record
-named in Section 7 are available at [repository to be inserted], together with a README that maps
-each table and figure to the script and the record that produce it.
+named in Section 7 are available at <https://github.com/BinNong/reference-scale-ubss>, together with a
+README that maps each table and figure to the script and the record that produce it.
 
 **Ethics.** Only publicly available, openly licensed corpora are used. No data were collected
 from human participants and no experiments on human subjects were performed for this study, so

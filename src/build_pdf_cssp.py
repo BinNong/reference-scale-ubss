@@ -301,8 +301,13 @@ def main() -> None:
     # CSSP 是单盲：默认保留作者信息与真实仓库地址；只有 --anon 才做双盲处理。
     if a.repo:
         d["body"] = d["body"].replace("[repository to be inserted]", a.repo)
-    elif a.anon:
+    if a.anon:
+        # 手稿里现在是**真实地址**（不再是占位符），故两条路径都要中性化 ——
+        # 只换占位符的话，`--anon` 会静默漏出仓库地址，比不匿名更危险。
         d["body"] = d["body"].replace("[repository to be inserted]", ANON_REPO)
+        d["body"], n_url = re.subn(r"<?https?://github\.com/[^\s>,]+>?", ANON_REPO, d["body"])
+        if not n_url and "[repository to be inserted]" not in d["body"]:
+            print("  ⚠ --anon：正文里既无占位符也无 github 地址，无法中性化仓库链接——请人工核对")
     d["body"] = collapse_ranges(d["body"])
 
     if a.anon:

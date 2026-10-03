@@ -137,6 +137,60 @@ def build_bundle() -> None:
             die(f"{f} 里仍有 {len(hz)} 个中文字符——内部注记混进投稿件了")
     print("  ✓ 投稿件无中文残留")
 
+    write_readme()
+
+
+def write_readme() -> None:
+    """上传对照表。数字与仓库地址都**现取**（手稿 / 成品 PDF），不在脚本里写死——
+    本仓库是公开的，脚本里不出现姓名、邮箱与地址。"""
+    md = (ROOT / "paper" / "manuscript.md").read_text()
+    cl = (ROOT / "paper" / "cover_letter_cssp.md").read_text()
+
+    n_tab = len(re.findall(r"\*\*Table \d+\.\*\*", md))
+    n_fig = len(re.findall(r"\*\*Fig\. \d+\.\*\*", md))
+    n_ref = len(re.findall(r"(?m)^\[\d+\]", md))
+    pages = subprocess.run(["pdfinfo", str(SUB / "manuscript.pdf")],
+                           capture_output=True, text=True).stdout
+    m = re.search(r"(?m)^Pages:\s*(\d+)", pages)
+    n_pg = m.group(1) if m else "?"
+    m = re.search(r"https?://\S*github\.com/[^\s>,]+", md)
+    repo = m.group(0) if m else "(未在手稿里找到仓库地址)"
+    m = re.search(r"(?m)^\*\*Date:\*\*\s*(.+)$", cl)
+    date = m.group(1).strip() if m else "(未填日期)"
+
+    text = f"""Upload checklist
+Circuits, Systems, and Signal Processing (Springer US) -- Editorial Manager
+https://www.editorialmanager.com/cssp/
+
+Produced by `python3 src/pack_submission.py`. Do not edit by hand: rerun it.
+
+  Item in Editorial Manager    File in this folder       Notes
+  --------------------------   -----------------------   --------------------------------
+  Cover Letter                 cover_letter.pdf          letter dated {date}
+  Title Page                   title_page.pdf            authors, affiliations, statements
+  Manuscript                   manuscript.pdf            Springer reference style,
+                                                         author block on page 1
+  Editable source files        manuscript_source.zip     manuscript.tex + Fig1..Fig{n_fig}
+
+Manuscript: {n_pg} pages, {n_tab} tables, {n_fig} figures, {n_ref} references.
+
+Notes
+  * Editable source files are mandatory at this journal ("Failing to submit a complete
+    set of editable source files will result in your article not being considered for
+    review"); they are in manuscript_source.zip.
+  * All figures are placed within the body of the manuscript PDF, so no separate figure
+    upload is required. If the system asks for them separately, extract Fig1.pdf ...
+    Fig{n_fig}.pdf from manuscript_source.zip -- the names already follow the required
+    "Fig<number>" pattern.
+  * Code, fixed configurations and every machine-readable record:
+    {repo}
+
+The manuscript and this bundle are not part of the public repository above; only code,
+configurations, records and the README are.
+"""
+    (SUB / "README.txt").write_text(text)
+    print("  ✓ submission/README.txt")
+
 
 def main() -> None:
     print("=== 1/2 LaTeX 源文件包 ===")
