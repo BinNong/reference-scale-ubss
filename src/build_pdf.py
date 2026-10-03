@@ -592,14 +592,20 @@ def verify_pdf(pdf: Path, d: dict) -> list[str]:
         if re.search(pat, flat):
             bad.append(f"成品里残留 {what}")
 
-    # 1b) 投稿前的草稿痕迹：这三类一旦留在成品里，就是"unfinished draft"的证据
+    # 1b) 投稿前的草稿痕迹：这几类一旦留在成品里，就是"unfinished draft"的证据
+    #
+    #     必须搜 **flat_num**（已抹掉行号）而不是 flat：`\linenumbers` 的行号是排进版面的，
+    #     落在词组中间就会把它切断。实测踩过——`[repository to be inserted]` 在版面上被断成
+    #     "[repository to be" / 行号 / "inserted]"，`flat` 里没有这个连续子串，于是检查通过、
+    #     脚本退出 0，而 PDF 里占位符明明白白摆着。上面算 flat_num 就是为查词组，
+    #     这里却用了 flat，等于白算。
     for pat, what in ((r"repository to be inserted", "仓库地址占位符 `[repository to be inserted]`"),
                       (r"funding information to be inserted",
                        "基金信息占位符 `[funding information to be inserted]`"),
                       (r"add campus/city", "单位占位符 `[add campus/city if required]`"),
                       (r"To be filled", "作者/单位占位符 `[To be filled]`"),
                       (r"\bTODO\b", "TODO 标记")):
-        if re.search(pat, flat, re.I):
+        if re.search(pat, flat_num, re.I):
             bad.append(f"投稿前必须处理：{what}")
 
     # 2) markdown 语法不该漏成字面量（算法块里的 F*T 之类是合法星号，故只认"字母/空格/连字符"夹心）
