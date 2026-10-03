@@ -216,6 +216,53 @@ def star_appendix(tex: str) -> str:
     return tex
 
 
+def number_equations(tex: str, expect: int) -> str:
+    """把 pandoc 的 `\\[ … \\]` 显示公式换成**带编号**的 `equation` 环境。
+
+    pandoc 把 markdown 的 `$$…$$` 一律输出成 `\\[ … \\]`，而那是**按定义不编号**的显示数学
+    环境。表格与图有号，是因为脚本写了编号逻辑；公式**从来没人写过**，于是 20 个公式一直
+    静默地没有编号（正文也从不引用公式号，所以没有任何东西去暴露它）。
+
+    ⚠️ 只认**独占一行**的 `\\[` / `\\]`：行内的换行间距 `\\\\[6pt]` 与之形态不同，
+       用"整行相等"判断可以完全避开误判。
+    ⚠️ 嵌在表格单元格里的显示数学**不能**换成 `equation`（会报 Bad math environment
+       delimiter），故先断言所有块都在顶层（本稿 20 个块全部顶格）。
+    ⚠️ `expect` 由 **markdown 侧的 `$$` 对数**推得，不写死：pandoc 的输出形态一旦变化，
+       这里必须报错而不是静默少编几个号。
+    """
+    out, n, in_table = [], 0, 0
+    for ln in tex.split("\n"):
+        s = ln.strip()
+        if s == r"\[":
+            if in_table:
+                die("显示公式出现在表格环境内，不能换成 equation 环境")
+            n += 1
+            out.append(r"\begin{equation}")
+            continue
+        if s == r"\]":
+            out.append(r"\end{equation}")
+            continue
+        if re.match(r"\\begin\{(longtable|tabular|table)\*?\}", s):
+            in_table += 1
+        elif re.match(r"\\end\{(longtable|tabular|table)\*?\}", s):
+            in_table = max(0, in_table - 1)
+        out.append(ln)
+    if n != expect:
+        die(f"编号的显示公式 {n} 个，但手稿里有 {expect} 个 `$$` 块 —— pandoc 输出形态可能变了")
+    print(f"公式：{n} 个显示公式改为带编号的 equation 环境")
+    return "\n".join(out)
+
+
+def finish_body_tex(pandoc_out: str, specs: list[list[float]], body_md: str) -> str:
+    """pandoc 输出 → 成品正文 tex 的**统一收口**。两个构建器都走这里。
+
+    集中在一处，是为了避免"表格/图有编号、公式忘了编号"这类只在一边写逻辑的偏差
+    （本轮公式无编号正是这么来的）。`expect` 从**原始 markdown 正文**数 `$$` 得到。
+    """
+    expect = len(re.findall(r"(?m)^[ \t]*\$\$[ \t]*$", body_md)) // 2
+    return number_equations(star_appendix(rewrite_tables(pandoc_out, specs)), expect)
+
+
 def table_captions(body: str) -> tuple[str, list[int], list[list[float]]]:
     """`**Table N.** cap` -> pandoc 的 `: cap` 语法。
 
@@ -669,6 +716,16 @@ def verify_pdf(pdf: Path, d: dict) -> list[str]:
         if order != list(range(1, n + 1)):
             bad.append(f"{kind} 题注落页顺序不是 1..{n}：{order}")
 
+    # 3b) 公式编号。pandoc 的 `\[ … \]` **默认不编号**，本稿在 tex 层一律改成 `equation`
+    #     环境，所以这里断言"成品里的公式号恰为 1..N 且按落页顺序递增"。
+    #     N 从手稿的 `$$` 对数推得，不写死（写死张数是本项目反复踩的坑）。
+    #     提取用 `-layout` 输出：公式号排在右边距，行尾就是 `(n)`；未经编号的稿子里
+    #     这个模式零命中（实测），所以不会有假阳性，而一旦有杂项命中，下面的序列断言会**响亮地**失败。
+    n_eq = len(re.findall(r"(?m)^[ \t]*\$\$[ \t]*$", d["body"])) // 2
+    eqs = [int(x) for x in re.findall(r"\((\d{1,2})\)[ \t]*$", txt, re.M)]
+    if n_eq != len(eqs) or eqs != list(range(1, n_eq + 1)):
+        bad.append(f"公式编号异常：手稿 {n_eq} 个公式，成品里读到 {eqs}")
+
     # 4) 结构锚点
     for k in ("Abstract", "Keywords", "References", "Algorithm 1"):
         if k not in flat_num:
@@ -786,7 +843,7 @@ def main() -> None:
                 "-t", "latex", "--top-level-division=section"], cwd=BUILD)
     if p.returncode:
         die(f"pandoc 正文失败：\n{p.stderr}")
-    body_tex = star_appendix(rewrite_tables(p.stdout, specs))
+    body_tex = finish_body_tex(p.stdout, specs, d["body"])
 
     # 摘要与参考文献都要过 pandoc：它们是 markdown（*强调*、$数学$），
     # 直接塞进 LaTeX 会把 `*...*` 的星号原样印出来（实测踩过）。

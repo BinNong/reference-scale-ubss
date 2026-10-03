@@ -327,7 +327,7 @@ def main() -> None:
                   "-t", "latex", "--top-level-division=section"], cwd=B.BUILD)
     if p.returncode:
         B.die(f"pandoc 正文失败：\n{p.stderr}")
-    body_tex = B.star_appendix(B.rewrite_tables(p.stdout, specs))
+    body_tex = B.finish_body_tex(p.stdout, specs, d["body"])
 
     p = B.pandoc(["-f", "markdown", "-t", "latex"], input=B.fix_degree(d["abstract"]))
     if p.returncode:
