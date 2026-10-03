@@ -1,0 +1,7 @@
+# Reference environment for the reported numbers.
+# Python 3.12.9 was used; the pinned versions below are those the records were produced with.
+numpy==1.26.4
+scipy==1.15.3
+scikit-learn==1.6.1
+matplotlib==3.10.3
+soundfile==0.13.1

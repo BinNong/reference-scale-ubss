@@ -1,0 +1,13 @@
+# 二进制：不做行尾转换
+*.pdf   binary
+*.json  -diff
+*.flac  binary
+*.wav   binary
+
+# Springer 官方模板的 .bst/.tex 是 CRLF，LaTeX 工具链对行尾敏感——原样保留
+paper/springer_template/** text eol=crlf
+
+# 其余文本统一 LF
+*.py    text eol=lf
+*.md    text eol=lf
+*.sh    text eol=lf

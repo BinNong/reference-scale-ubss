@@ -1,0 +1,80 @@
+{
+ "config": {
+  "seeds": 20,
+  "root": "../data/ls_corpus",
+  "real_seeds": 3,
+  "out": "../results/r2_runtime.json",
+  "no_real": false
+ },
+ "per_case": [
+  {
+   "domain": "synth",
+   "case": "tf_p02",
+   "E1_energy": 1.3008713722229004e-05,
+   "E2_noise_floor": 0.0003593219444155693,
+   "E3_gate_and_check": 0.00014701765030622482,
+   "E4_clustering": 0.003924842923879623,
+   "E5_recovery": 0.07082423381507397,
+   "total": 0.07537901401519775
+  },
+  {
+   "domain": "synth",
+   "case": "tf_p05",
+   "E1_energy": 1.3218261301517487e-05,
+   "E2_noise_floor": 0.000354621559381485,
+   "E3_gate_and_check": 0.00014608539640903473,
+   "E4_clustering": 0.004258059896528721,
+   "E5_recovery": 0.0719607574865222,
+   "total": 0.07670743856579065
+  },
+  {
+   "domain": "synth",
+   "case": "tf_p10",
+   "E1_energy": 1.3144686818122864e-05,
+   "E2_noise_floor": 0.00035485532134771347,
+   "E3_gate_and_check": 0.0001458190381526947,
+   "E4_clustering": 0.004469715990126133,
+   "E5_recovery": 0.07237199135124683,
+   "total": 0.0774049861356616
+  },
+  {
+   "domain": "synth",
+   "case": "tf_p20",
+   "E1_energy": 1.3568438589572906e-05,
+   "E2_noise_floor": 0.0003545628860592842,
+   "E3_gate_and_check": 0.00014509819447994232,
+   "E4_clustering": 0.004900309257209301,
+   "E5_recovery": 0.07183503918349743,
+   "total": 0.0772633608430624
+  },
+  {
+   "domain": "synth",
+   "case": "tf_p40",
+   "E1_energy": 1.3260170817375183e-05,
+   "E2_noise_floor": 0.00035474635660648346,
+   "E3_gate_and_check": 0.00014507677406072617,
+   "E4_clustering": 0.005379410460591316,
+   "E5_recovery": 0.07176205981522799,
+   "total": 0.07815564051270485
+  }
+ ],
+ "summary": {
+  "synth": {
+   "E1_energy": 1.3218261301517487e-05,
+   "E2_noise_floor": 0.00035474635660648346,
+   "E3_gate_and_check": 0.0001458190381526947,
+   "E4_clustering": 0.004469715990126133,
+   "E5_recovery": 0.07183503918349743,
+   "total": 0.0772633608430624
+  },
+  "real_win1024": {
+   "E1_energy": 0.00020738504827022552,
+   "E2_noise_floor": 0.002993512898683548,
+   "E3_gate_and_check": 0.0008908268064260483,
+   "E4_clustering": 0.010948307812213898,
+   "E5_recovery": 2.337177310138941,
+   "total": 2.351080723106861,
+   "n_tf_points": 47709
+  }
+ }
+}

@@ -1,0 +1,49 @@
+# ⚠ 目录级规则都带前置 `/`（只匹配仓库根）。不带前缀会匹配**任意层级**的同名目录
+#    ——本项目暂时没有同名嵌套目录，但保持这个写法，以免日后某个 src/*/build/ 被误伤。
+
+# ---- 凭据与本地环境：绝不入库 ----
+# 含明文 SSH user / host / password；scripts/ 下的包装脚本从它读取
+/remote_server.md
+*.pem
+*.key
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# ---- 手稿与评审材料：投稿期间不得公开 ----
+# 手稿全文（含作者姓名/单位/邮箱）、审稿报告、逐条核查与回复信都是保密材料。
+# 本仓库只发布「代码 + 固定配置 + 机器可读记录 + README」，
+# 这正是稿件可用性声明里承诺的那一组。
+/paper/manuscript*.md
+/paper/manuscript*.pdf
+/paper/main.pdf
+/paper/referee_report_*.md
+/paper/review_report*.md
+/paper/cssp_*_triage.md
+/paper/cssp_title_page.md
+/paper/cover_letter_cssp.md
+/paper/response_to_review_*.md
+# Springer 官方模板：第三方材料（版权归 Springer），复现用不到
+/paper/springer_template/
+
+# 含完整作者块（姓名 / 单位 / 邮箱）的改稿脚本：改写成通用形式会破坏其可重放性，
+# 且它们离开手稿本来就无法运行，故整文件排除。
+/src/apply_referee_fixes.py
+/src/apply_r3_fixes.py
+
+# ---- 助手工作区 ----
+/.workbuddy/
+
+# ---- 构建中间产物 ----
+# 成品 PDF 在 paper/ 下；build/ 整个是 LaTeX 中间态，可由 build_pdf*.py 重建
+/build/
+
+# ---- 冗余产物 ----
+# figures_v2/ 是另一套**同名但内容不同**的图（fig_architecture.pdf 已 cmp 确认不同），
+# 留着会让「按图名取图」的人拿到错的那份。稿中在用的是 figures_nfr/ 与 figures_real/。
+/results/figures_v2/
+# 正文图一律用矢量 PDF；散落的位图只是中间产物
+/results/figures_*/*.png
