@@ -77,7 +77,12 @@ def build_latex() -> None:
     tex, n = re.subn(r"\\graphicspath\{\{[^}]*\}\}", r"\\graphicspath{{./}}", tex)
     if n != 1:
         die(f"graphicspath 替换命中 {n} 次")
-    left = re.findall(r"/Users/\S+", tex)
+    # 源文件包里不能残留绝对路径：既泄露构建机的本地目录，也让包在别处编译不了。
+    # 按"根锚定 + 至少一段目录名"的**形态**匹配，而不是抄某个具体前缀——抄前缀只能
+    # 认出某一台机器，而且把那个字面前缀写进本文件会撞上仓库的身份 gate（CLAUDE.md）。
+    # `:/` 与 `//` 都排除，否则 `https://github.com/…` 的 `/github.com/` 会被当成路径
+    # （实测真实 tex 上误报 5 次）；`.` 也排除，否则 `./Fig1.pdf` 这类相对路径中枪。
+    left = re.findall(r"(?<![\w.:/])/[A-Za-z][\w.-]*/", tex)
     if left:
         die(f"仍残留绝对路径：{left[:3]}")
 
