@@ -303,8 +303,14 @@ def main() -> None:
 
     # 1) 手稿：先做句子增删，再换号，最后重排清单
     body, n_edit = edit_sentence(ms, direction, old_no, new_no)
-    if n_edit != 1:
+    # R13（apply_r13_compress_protocol.py）把 §7 的逐个归档清单换成分类汇总，
+    # ANCHOR 那句连带消失。按"登记而非删除"的约定登记：反向重放无法把它插回，
+    # 故锚缺失时记 0 次并放行，不让往返测试死在这句上。锚仍在时判据不变。
+    if n_edit != 1 and ANCHOR in ms:
         die(f"§7 那句没被处理（edit 命中 {n_edit} 次）——核对 {ANCHOR!r} 的现行形态")
+    if ANCHOR not in ms:
+        print("  [R13 已登记] §7 归档清单已压成分类汇总，ANCHOR 句不存在，"
+              "edit_sentence 记 0 次并放行")
     body, n_tok = permute(body, m)
     body = reorder_caption_block(body)
     print(f"  paper/manuscript.md            图号 token {n_tok} 处，§7 附带引用 {'插回' if a.reverse else '删除'} 1 处")

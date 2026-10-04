@@ -111,6 +111,13 @@ while the *decision* would need a detector that distinguishes late reverberation
 noise — a detection problem, not a calibration one.
 """
 
+# R13 把 §7 的逐个归档清单换成分类汇总，下面锚定 §7 枚举句的条目随之失效。
+# 按"登记而非删除"的约定登记；判据仍是"不得新增未命中"。
+SUPERSEDED_R13 = {
+    '§7 清单：补 r8_real_room.json',
+}
+
+
 E: list[tuple[str, str, str]] = [
 
 ("§10 引言：加入 §10.5（实测房间）",
@@ -162,6 +169,11 @@ def main() -> None:
             print(f"  [跳过] {tag}")
             continue
         if old not in s or s.count(old) != 1:
+            # R13：§7 枚举句被压成分类汇总，本条随之失效，显式登记后跳过。
+            if old not in s and tag in SUPERSEDED_R13:
+                skipped += 1
+                print(f"  [R13 已登记，跳过] {tag}")
+                continue
             die(f"「{tag}」：旧文出现 {s.count(old)} 次（要求唯一）")
         s = s.replace(old, new, 1)
         changed += 1

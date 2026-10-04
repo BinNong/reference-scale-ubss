@@ -38,6 +38,13 @@ The protocol of Section 9.1 is repeated unchanged on a second corpus, so that th
 
 The two corpora behave the same way in the quantities that carry the claim rather than in their digits. The conventional reference scale costs an order of magnitude on each — $13.1\times$ and $15.2\times$, with worst configurations at $32\times$ and $31\times$ — so the failure it produces is not a property of LibriSpeech. The calibrated gate transfers at essentially the same absolute error, $1.15°$ against $1.12°$, without any change of constant, and it beats the conventional default in fourteen of the fifteen configurations on the new corpus against fifteen of fifteen on the old. One quantity does move: the penalty against the best-observed reference rises from $1.62\times$ to $1.86\times$. The price of transferring without a selected coefficient is therefore not exactly corpus-independent, which is what a second corpus was needed to establish."""
 
+# R13 把 §7 的逐个归档清单换成分类汇总，下面锚定 §7 枚举句的条目随之失效。
+# 按"登记而非删除"的约定登记；判据仍是"不得新增未命中"。
+SUPERSEDED_R13 = {
+    '§7 可用性清单：点名第二个语料的两个归档',
+}
+
+
 E = [
     (
         "§9.6：补跨语料结论并指向 §A.20",
@@ -98,6 +105,13 @@ def main() -> None:
             if sig in s:
                 print(f"  [已改，跳过] {tag}")
                 skipped += 1
+                continue
+            # R13（apply_r13_compress_protocol.py）把 §7 的归档清单压成分类汇总，
+            # 本条锚定的 §7 枚举句随之消失。按"登记而非删除"的约定登记：
+            # 条目效果已在稿中，只是不再由本脚本追加。
+            if tag in SUPERSEDED_R13:
+                skipped += 1
+                print(f"  [R13 已登记，跳过] {tag}")
                 continue
             print(f"  ✗ 未命中（原文不存在）：{tag}")
             missing += 1

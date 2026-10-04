@@ -261,7 +261,9 @@ def main() -> int:
             want("Table 45 两行逐格与两个归档复算一致", not bad, str(bad))
         want("§A.20 声明了语料规模（31 说话人 / 3359 条 / 48 kHz）",
              r"$3{,}359$ utterances from $31$ speakers" in t and r"$48$ kHz" in t)
-        want("§A.20 与 §7 清单点名两个归档",
+        # R13 起 §7 的归档清单压成分类汇总，两个记录名只在 §A.20 出现；
+        # 判据不变（作用于全文），标签如实反映位置。
+        want("§A.20 点名两个归档（§7 清单 R13 已压成分类汇总）",
              "r10_real_slr70.json" in t and "r10_real_slr70_grid.json" in t)
         want("§11 *Seventh* 已由单语料改写为两语料",
              "rests on two corpora but not on many" in t

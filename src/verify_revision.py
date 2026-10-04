@@ -232,6 +232,25 @@ def main():
     check("  purity 1,392", 1392, len(p1) + len(p2), 0.0)
     check("  scaling 54", 54, len(json.loads((R / "scale_invariance.json").read_text())["rows"]), 0.0)
 
+    # R13 起 §7 的逐个枚举压成分组总数，"鲁棒性套件"那组只给一个合计。
+    # 判据随之改为**从手稿解析该合计、与七个归档的实条数对齐**。
+    # 早先这里是写死的字面量探针 "1{,}320"，只查"这个数出现在正文里"，
+    # 而七个归档之和其实是 1,344（差 24 = r2_noise_family 由 120 扩到 144 那一下、
+    # 合计从未跟着改）——探针正好把错数字钉住，错得越久越"通过"。
+    _rb = ["r2_ssp_quality.json", "r2_ssp_quality_real.json", "r2_eta_sweep.json",
+           "r2_qmax_sweep.json", "r2_noise_family.json", "r2_angle_sweep.json",
+           "r2_heatmap_p_snr.json"]
+    _tot = sum(len(json.loads((R / _n).read_text())["records"]) for _n in _rb)
+    print(f"  robustness 套件七个归档合计 = {_tot}")
+    if ms is not None:
+        _m = re.search(r"adds \$([^$]+)\$ records", ms)
+        if not _m:
+            print("  FAIL §7 Records 段解析不出鲁棒性套件合计")
+            FAIL.append("§7 robustness 合计可解析")
+        else:
+            check("  §7 robustness 套件合计",
+                  int(re.sub(r"[^0-9]", "", _m.group(1))), _tot, 0.0)
+
     if ms is not None:
         print("\n[手稿] 关键新值确实出现在正文")
         # 第二轮：guard 决策口径修正后，"26 times"/"$24\%$" 已被"no material error"取代
@@ -239,7 +258,7 @@ def main():
                     "27 conditions", "no material error", "$1.0\\%$", "$3.4\\%$",
                     "1{,}392", "$54$ cells", "0.1$ at $p=0.40$ to $20$", "$87$",
                     "$1208$", "27.02", "$+0.2\\%$",
-                    "Robustness and Cost", "1{,}320"]:
+                    "Robustness and Cost", "1{,}344"]:
             ok = lit in ms
             print(f"  {'OK ' if ok else 'FAIL'} {lit!r}")
             if not ok:

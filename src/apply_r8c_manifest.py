@@ -34,6 +34,15 @@ E: list[tuple[str, str, str]] = [
 ]
 
 
+# R13 把 §7 的逐个归档清单换成分类汇总，下面两条条目的锚文本随之消失。
+# 按"登记而非删除"的约定整表登记：稿件已不含这些锚，故两行都应"已登记并跳过"，
+# 而不是未命中退出。判据仍是"不得新增未命中"——登记是显式的，不是静默放过。
+SUPERSEDED_R13 = {
+    "§7 清单：r2_noise_family 记录数 120 -> 144",
+    "§7 清单：补第八轮归档 r8_n_mismatch.json",
+}
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry", action="store_true")
@@ -47,6 +56,10 @@ def main() -> None:
             print(f"  [跳过] {tag}")
             continue
         if old not in s:
+            if tag in SUPERSEDED_R13:
+                skipped += 1
+                print(f"  [R13 已登记，跳过] {tag}")
+                continue
             print(f"✗ 未命中：{tag}")
             sys.exit(1)
         if s.count(old) != 1:

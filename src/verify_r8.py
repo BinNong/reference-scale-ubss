@@ -141,6 +141,10 @@ def main() -> None:
     # ---------------------------------------------------------------- C
     print("\n=== C. 正文散文里的断言 ===")
     flat = re.sub(r"\s+", " ", text)
+    # R13：§7 改由 README 逐个点名归档，故读它。缺失时给空串——判据应当失败，
+    # 而不是因为"文件不在"被跳过。
+    readme = ((ROOT / "README.md").read_text()
+              if (ROOT / "README.md").exists() else "")
     want("§10.4 引 'a factor of thirteen'", "a factor of thirteen" in flat)
     want("§10.4 引 0.55 vs 7.19/7.51",
          "$0.55°$ against $7.19°$ and $7.51°$" in flat)
@@ -182,7 +186,9 @@ def main() -> None:
 
     # ---------------------------------------------------------------- E
     print("\n=== E. 归档可用性 ===")
-    want("manifest 点名 r8_n_mismatch.json", "r8_n_mismatch.json" in flat)
+    # R13 起 §7 不再逐个点名归档（压成分组总数，改由仓库 README 点名并映射
+    # 表/图 -> 脚本 -> 归档）。纪律不放松，只把断言对象换成论文指向的那份文件。
+    want("README 点名 r8_n_mismatch.json", "r8_n_mismatch.json" in readme)
     want("r8_n_mismatch.json 在 results/", (RES / "r8_n_mismatch.json").exists())
 
     # ---------------------------------------------------------------- F
@@ -208,7 +214,7 @@ def main() -> None:
                   "OpenSLR SLR28", "$0.927$ and $0.991$", "$38$ to $61$ dB",
                   "no source is emitting"):
         want(f"  {probe[:46]!r} 在", probe in flat)
-    want("manifest 点名 r8_real_room.json", "r8_real_room.json" in flat)
+    want("README 点名 r8_real_room.json", "r8_real_room.json" in readme)
     want("r8_real_room.json 在 results/", (RES / "r8_real_room.json").exists())
 
     print("\n" + "=" * 74)

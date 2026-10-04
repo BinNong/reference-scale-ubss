@@ -46,6 +46,13 @@ Two things follow. First, for $J=2$ the deviation is a *deterministic* function 
 
 What the method uses is not the signal energy but the observable $r(p)$. Re-evaluating the mixture law of Proposition 6 with the two signal laws gives a deviation of at most $0.003\%$ for $p\le0.10$ — the regime in which the median lies inside the noise component and the semi-analytic form is used to advantage — rising to $4.1\%$ at $p=0.20$ and $13.0\%$ at $p=0.40$ for $M=2$ ($2.8\%$ and $8.9\%$ at $M=3$). These reproduce the figures quoted in Section 4.2 from an independent Monte Carlo, and they are why the approximation is described there as affecting the quantity the method uses by less than $0.1\%$ throughout the range in which that quantity is used, rather than globally. The record is `r10_gram_spectrum.json`."""
 
+# R13 把 §7 的逐个归档清单换成分类汇总，下面锚定 §7 枚举句的条目随之失效。
+# 按"登记而非删除"的约定登记；判据仍是"不得新增未命中"。
+SUPERSEDED_R13 = {
+    '§7 可用性清单：点名 r10_gram_spectrum.json',
+}
+
+
 E = [
     (
         "§7 可用性清单：点名 r10_gram_spectrum.json",
@@ -100,6 +107,13 @@ def main() -> None:
             if sig in s:
                 print(f"  [已改，跳过] {tag}")
                 skipped += 1
+                continue
+            # R13（apply_r13_compress_protocol.py）把 §7 的归档清单压成分类汇总，
+            # 本条锚定的 §7 枚举句随之消失。按"登记而非删除"的约定登记：
+            # 条目效果已在稿中，只是不再由本脚本追加。
+            if tag in SUPERSEDED_R13:
+                skipped += 1
+                print(f"  [R13 已登记，跳过] {tag}")
                 continue
             print(f"  ✗ 未命中（原文不存在）：{tag}")
             missing += 1
