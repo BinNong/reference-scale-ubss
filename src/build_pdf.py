@@ -57,18 +57,32 @@ FIGWIDTH = {"fig_snr.pdf": 0.62}
 TEXTWIDTH_PT = 597.5 - 2 * (2.5 * 28.3465)
 # 等宽字体每字符宽 0.525em
 MONO_EM = 0.525
-# (LaTeX 字号命令, pt)
+# (LaTeX 字号命令, pt)。按从大到小排：mono_size_for 取第一个放得下的。
+# 最后一档 6pt 是给正文宽只有 372pt 的 sn-jnl 用的（article 骨架 455.8pt，
+# 最长 95 字符一行选到 \scriptsize 就够了；sn-jnl 下要 6pt 才落得进 88% 余量）。
 MONO_SIZES = [("\\small", 10.0), ("\\footnotesize", 9.0),
-              ("\\scriptsize", 8.0), ("\\tiny", 7.0)]
+              ("\\scriptsize", 8.0), ("\\tiny", 7.0),
+              ("\\fontsize{6}{7}\\selectfont", 6.0)]
 
 
-def mono_size_for(longest: int) -> tuple[str, float]:
-    """按最长行挑等宽字号，留 12% 余量。返回 (字号命令, 实际占宽比)。"""
+def mono_size_for(longest: int, textwidth_pt: float = TEXTWIDTH_PT) -> tuple[str, float, bool]:
+    """按最长行挑等宽字号，留 12% 余量。返回 (字号命令, 实际占宽比, 是否需整体缩放)。
+
+    `textwidth_pt` 是**正文宽**，必须与所用文档类一致：等宽行不换行，字号按正文宽算。
+    article+2.5cm 页边是 455.8pt，而 Springer `sn-jnl` 只有 **372pt**（窄 18%）——
+    拿前者的结论去排后者，最长行会真的冲出纸面（实测 sn-jnl 版 6 处 Overfull）。
+
+    第三返回值恒为 False：等宽块不换行，字号这一层已经兜住。曾试过"缩不下就用
+    `\\resizebox` 整体缩放"，但 verbatim 进 `lrbox` 会 "You've lost some text"、
+    缩整个 minipage 又因为那框本来就是 \\textwidth 宽而成空操作（Overfull 反升），
+    故不再走缩放。
+    """
     for cmd, pt in MONO_SIZES:
         width = longest * MONO_EM * pt
-        if width <= 0.88 * TEXTWIDTH_PT:
-            return cmd, width / TEXTWIDTH_PT
-    die(f"算法块最长行 {longest} 字符，即使 \\tiny 也放不下")
+        if width <= 0.88 * textwidth_pt:
+            return cmd, width / textwidth_pt, False
+    cmd, pt = MONO_SIZES[-1]
+    return cmd, longest * MONO_EM * pt / textwidth_pt, False
 
 
 def die(msg: str) -> None:
@@ -403,8 +417,9 @@ def rewrite_tables(tex: str, specs: list[list[float]]) -> str:
     return tex
 
 
-def algorithm_block(body: str) -> str:
+def algorithm_block(body: str, textwidth_pt: float | None = None) -> str:
     """Algorithm 1 的代码块 -> 带框浮动体（verbatim 不换行，必须装箱降字号）。"""
+    tw = TEXTWIDTH_PT if textwidth_pt is None else textwidth_pt
     m = re.search(r"^\*\*Algorithm (\d+)\*\*\s*(.+?)\n\n```\n(.*?)\n```\n", body, re.S | re.M)
     if not m:
         return body
@@ -412,7 +427,7 @@ def algorithm_block(body: str) -> str:
     if "\\end{verbatim}" in code:
         die("算法块含 \\end{verbatim}，需换实现")
     longest = max(len(l) for l in code.split("\n"))
-    size_cmd, frac = mono_size_for(longest)
+    size_cmd, frac, _scale = mono_size_for(longest, tw)
     block = raw_latex(rf"""
 \begin{{figure}}[!ht]
 \centering
@@ -467,11 +482,11 @@ def insert_figures(body: str, figs: dict[int, str], figfiles: dict[int, str]) ->
     return body
 
 
-def build_body_md(d: dict) -> tuple[str, list[int], list[list[float]]]:
+def build_body_md(d: dict, textwidth_pt: float | None = None) -> tuple[str, list[int], list[list[float]]]:
     body = d["body"]
     body = re.sub(r"^\s*---\s*$", "", body, flags=re.M)
     body = normalise_headings(body)
-    body = algorithm_block(body)
+    body = algorithm_block(body, textwidth_pt)
     body, tnums, specs = table_captions(body)
     body = insert_figures(body, d["figs"], d["figfiles"])
     body = re.sub(r"\n{3,}", "\n\n", body)
@@ -623,16 +638,23 @@ def write_tex(d: dict, body_tex: str, bibitems: str, abstract_tex: str,
 """
 
 
-def verify_pdf(pdf: Path, d: dict) -> list[str]:
+def verify_pdf(pdf: Path, d: dict, strip_lineno: bool = False) -> list[str]:
     """从**成品 PDF** 反向校验：编译通过不等于内容正确（实测漏过两处）。
 
-    返回问题列表；空列表表示通过。
+    `strip_lineno`：成品用 sn-jnl 的 `[lineno]`（vruler）时要置 True。那一套把行号排进
+    天头/侧边的固定列，`pdftotext -layout` 于是把它们贴到公式号后面 ——
+    `(5)   480` 而不是 `(5)`，"公式号在行尾"这条判据就被切断，报"公式编号异常"
+    而编号其实一个不少。开启后先把行尾的行号列抹掉再匹配。**默认 False**，
+    既有两条链的行为逐字节不变。
     """
     r = subprocess.run(["pdftotext", "-layout", str(pdf), "-"],
                        capture_output=True, text=True)
     if r.returncode:
         return ["pdftotext 失败，无法校验"]
     txt = r.stdout
+    if strip_lineno:
+        # 只抹"公式号/题注号后面紧跟的独立整数行号列"，不碰正文里的数字
+        txt = re.sub(r"(?m)(\(\d{1,2}\))[ \t]+\d{1,5}[ \t]*$", r"\1", txt)
     flat = re.sub(r"\s+", " ", txt)                    # 行号与断行会切开词组，先归一化空白
     # lineno 的行号是独立 token，抹掉它才能查词组；用前后都是空白的 `\d+` 判断，避免吃掉节号
     flat_num = re.sub(r"(?<=\s)\d{1,3}(?=\s)", "", flat)
