@@ -754,11 +754,17 @@ def verify_pdf(pdf: Path, d: dict, strip_lineno: bool = False) -> list[str]:
     #     故这里只作信息项打印，不设为断言（Springer 也没有"每个公式必须被引用"的要求）。
     #     真正会咬人的是**悬空引用**：一旦有人写 "as in Eq. (25)" 而全文只有 20 个公式，
     #     编号与内容就对不上，而"编号恰为 1..N"这条判据完全看不见它。
-    #     ⚠️ 只认带 `Eq.`/`Equation` 前缀的写法：裸 `(n)` 不能作引用证据——
+    #     ⚠️ 只认带 `Eq.`/`Eqs.`/`Equation(s)` 前缀的写法：裸 `(n)` 不能作引用证据——
     #        正文里的 `(n)` 是数学记号（`\mathcal{O}(1)`、`\mathrm{Exp}(1)`、`AR(1)`），
     #        拿它当引用会假 FAIL（本项目在探针上犯过同类错误）。
-    ref_pat = re.compile(r"\b(?:Eq\.|Eqs\.|[Ee]quations?)\s*\(?(\d{1,2})\)?")
-    cited = sorted({int(x) for x in ref_pat.findall(d["body"])})
+    #     ⚠️ 区间引用（`Eqs. (14)–(15)`）要把**两端都**收进来：只取首号会漏掉悬空的第二个号。
+    ref_pat = re.compile(
+        r"\b(?:Eqs?\.|[Ee]quations?)\s*\(?\s*\d{1,2}"
+        r"(?:\s*\)?\s*(?:[\u2013,\-]|and)\s*\(?\s*\d{1,2})*\)?")
+    cited = set()
+    for m in ref_pat.finditer(d["body"]):
+        cited.update(int(x) for x in re.findall(r"\d{1,2}", m.group(0)))
+    cited = sorted(cited)
     over = [n for n in cited if not 1 <= n <= n_eq]
     if over:
         bad.append(f"正文引用了不存在的公式号 {over}（全文共 {n_eq} 个公式）")
