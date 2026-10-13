@@ -748,6 +748,23 @@ def verify_pdf(pdf: Path, d: dict, strip_lineno: bool = False) -> list[str]:
     if n_eq != len(eqs) or eqs != list(range(1, n_eq + 1)):
         bad.append(f"公式编号异常：手稿 {n_eq} 个公式，成品里读到 {eqs}")
 
+    # 3b) 公式**引用**：与上一节"编号是否齐全"是两件事，必须分开判。
+    #     本稿正文**不用编号引用公式**：符号一经定义就一律用符号名（$r(p)$、$t_e$、$\nu$、$Q_q$），
+    #     且 20 个公式全部就地引导并立即使用。这是数学写作的常规做法，**不是缺陷**，
+    #     故这里只作信息项打印，不设为断言（Springer 也没有"每个公式必须被引用"的要求）。
+    #     真正会咬人的是**悬空引用**：一旦有人写 "as in Eq. (25)" 而全文只有 20 个公式，
+    #     编号与内容就对不上，而"编号恰为 1..N"这条判据完全看不见它。
+    #     ⚠️ 只认带 `Eq.`/`Equation` 前缀的写法：裸 `(n)` 不能作引用证据——
+    #        正文里的 `(n)` 是数学记号（`\mathcal{O}(1)`、`\mathrm{Exp}(1)`、`AR(1)`），
+    #        拿它当引用会假 FAIL（本项目在探针上犯过同类错误）。
+    ref_pat = re.compile(r"\b(?:Eq\.|Eqs\.|[Ee]quations?)\s*\(?(\d{1,2})\)?")
+    cited = sorted({int(x) for x in ref_pat.findall(d["body"])})
+    over = [n for n in cited if not 1 <= n <= n_eq]
+    if over:
+        bad.append(f"正文引用了不存在的公式号 {over}（全文共 {n_eq} 个公式）")
+    print(f"   · 公式引用：正文显式引用 {len(cited)} 处"
+          f"（编号 {cited if cited else '无'}，共 {n_eq} 个公式）")
+
     # 4) 结构锚点
     for k in ("Abstract", "Keywords", "References", "Algorithm 1"):
         if k not in flat_num:
