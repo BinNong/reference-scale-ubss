@@ -111,7 +111,7 @@ def prop8(text: str, tb) -> None:
     print("\n[A] Prop 8：exact → 下尾近似")
     want("旧命题名已消失", "exact quantile relation" not in text)
     want("旧限定句已消失", "still lies inside the noise component" not in text)
-    want("新命题名在稿", "**Proposition 8 (noise-dominated lower-tail relation).**" in text)
+    want("新命题名在稿", "**Proposition 3 (noise-dominated lower-tail relation).**" in text)
     want("亏项式在稿", "F_0(x_q)\\;=\\;\\frac{q}{\\pi_0}" in text)
     want("Fig. 2 题注已改", "chi-square lower-tail relation" in text)
     want("Algorithm 1 注释已改", "lower-tail inversion" in text)
@@ -144,7 +144,9 @@ def taxonomy(text: str) -> None:
     want("max 经验阈值补引在稿", "its maximum [5,7,28]" in text)
     want("百分位一类仍在", "[6,8,9]" in text)
     want("引言已提自适应变体", "from a statistic of the mixture computed at run time [27]" in text)
-    want("重复句已修", "which Propositions 6 and 7 make quantitative. Propositions 6 and 7 make it quantitative" not in text)
+    # ⚠️ 编号已随 R20 改为随出现顺序（6,7 → 1,2）。这条是**否定**断言：
+    #    若照旧号写，即使重复句重现也查不出来（断言会永远为真 = 失效）。
+    want("重复句已修", "which Propositions 1 and 2 make quantitative. Propositions 1 and 2 make it quantitative" not in text)
     for ref, frag in (("27", "Hassan"), ("28", "Chen")):
         mo = re.search(rf"^\[{ref}\] (.+)$", text, re.M)
         want(f"参考文献 [{ref}] 存在且为该文", bool(mo) and frag in mo.group(1),
@@ -280,12 +282,23 @@ def main() -> None:
     ms = pathlib.Path(a.manuscript)
     text = ms.read_text()
     tb = tables(ms)
+    tb_raw = dict(tb)   # R14 垫片必须从未被 _R8_TAB 改写过的原表取值
 
     # —— R8 表号整体重排后的兼容垫片（旧号 -> 新号），见 verify_r5.py 同名注释 ——
     _R8_TAB = {19: 23, 20: 24, 21: 25, 22: 26, 23: 19, 24: 20, 25: 27, 26: 28,
                27: 29, 28: 30, 29: 31, 30: 32, 31: 33, 32: 34, 33: 35, 34: 36,
                35: 37, 36: 38, 37: 39, 38: 40, 39: 21, 40: 41, 41: 42}
     tb.update({o: tb[n] for o, n in _R8_TAB.items() if n in tb})
+
+    # —— R14 兼容垫片：§10 四表（R8 号 19–22）入附录占 42–45，其余 ≥23 减 4。
+    def _r14(n: int) -> int:
+        return n + 23 if 19 <= n <= 22 else (n - 4 if n >= 23 else n)
+    _R14_TAB = {o: _r14(n) for o, n in _R8_TAB.items()}
+    tb.update({o: tb_raw[n] for o, n in _R14_TAB.items() if n in tb_raw})
+    # —— R14c 兼容垫片：§8.6 的 Table 12 也搬进附录，全文 ≥13 的表号再 -1。
+    #    在上一层（R14）结果上平移，仍然只挂号、不改断言。
+    _R14C_TAB = {o: (v - 1 if v >= 13 else v) for o, v in _R14_TAB.items()}
+    tb.update({o: tb_raw[v] for o, v in _R14C_TAB.items() if v in tb_raw})
 
     need = [1, 21, 22, 33, 37]
     missing = [n for n in need if n not in tb]

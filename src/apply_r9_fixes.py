@@ -62,6 +62,11 @@ E: list[tuple[str, str, str]] = [
         "Prop 2：非退化条件进命题陈述",
         r"**Proposition 2 (exactness without noise).** At a TF point where exactly one source is active, $|\cos(\mathbf{X}_r,\mathbf{X}_i)|=1$. *Proof.* With $\mathbf{s}=s_n\mathbf{e}_n$, Section 3.2 gives $\mathbf{X}_r=\mathrm{Re}(s_n)\mathbf{a}_n$ and $\mathbf{X}_i=\mathrm{Im}(s_n)\mathbf{a}_n$, both multiples of $\mathbf{a}_n$, so the cosine is $\pm1$ whenever $\mathrm{Re}(s_n)\mathrm{Im}(s_n)\neq0$. $\square$",
         r"**Proposition 2 (exactness without noise).** At a TF point where exactly one source is active and $\mathrm{Re}(s_n)\mathrm{Im}(s_n)\neq0$, $|\cos(\mathbf{X}_r,\mathbf{X}_i)|=1$. *Proof.* With $\mathbf{s}=s_n\mathbf{e}_n$, Section 3.2 gives $\mathbf{X}_r=\mathrm{Re}(s_n)\mathbf{a}_n$ and $\mathbf{X}_i=\mathrm{Im}(s_n)\mathbf{a}_n$, both multiples of $\mathbf{a}_n$, so the cosine is $\pm1$; the non-degeneracy condition is what keeps it defined, since $\mathbf{X}_i$ vanishes when $s_n$ is real. $\square$",
+        # ⚠️ 签名（R20 加）：R20 把 Proposition 编号改成随出现顺序后，§6 的这条由
+        #    Proposition 2 变成 Proposition 6 —— 效果（非退化条件进了命题陈述）
+        #    仍在，但整段 new 不再逐字存在。判"已完成"改用短签名。
+        #    （与 apply_r10b / apply_r10d 同一处理：只在插字不可避免时用。）
+        r"**Proposition 6 (exactness without noise).** At a TF point where exactly one source is active and $\mathrm{Re}(s_n)\mathrm{Im}(s_n)\neq0$",
     ),
     # ------------------------------------------------- 3.3 贡献 2 的 nominal 限定
     (
@@ -180,7 +185,12 @@ def main() -> None:
 
     s = MS.read_text()
     changed = skipped = missing = 0
-    for tag, old, new in E:
+    for item in E:
+        tag, old, new = item[0], item[1], item[2]
+        # 第 4 元素可选：判"已完成"的**短签名**（默认 = 整段 new）。
+        # 后一轮若在本条 new 中间改字或改编号，完整 new 会失效但效果仍在 —— 用签名
+        # 避免假未命中（R20 的 Proposition 重编号就撞到了这一条）。
+        sig = item[3] if len(item) > 3 else new
         if tag in _SUPERSEDED_R9B:
             print(f"  [R9b 已承接] {tag}")
             skipped += 1
@@ -210,7 +220,7 @@ def main() -> None:
             print(f"  ✓ {tag}  （容忍换行的匹配）")
             changed += 1
             continue
-        if new in s:
+        if sig in s:
             print(f"  [已改，跳过] {tag}")
             skipped += 1
             continue
