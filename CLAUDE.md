@@ -103,7 +103,7 @@ python3 src/r15_recount.py                                    # EVERY table agai
 python3 src/check_tables.py paper/manuscript.md               # every "mean" row vs. its column
 python3 src/check_refs.py                                     # dangling refs, numbering gaps, forward refs
 cd src
-for v in verify_revision.py verify_r4.py verify_r5.py verify_r6.py verify_r7.py verify_r8.py verify_r9.py verify_r10.py verify_r21.py; do python3 $v; done
+for v in verify_revision.py verify_r4.py verify_r5.py verify_r6.py verify_r7.py verify_r8.py verify_r9.py verify_r10.py verify_r21.py verify_r23.py; do python3 $v; done
 ```
 
 **`r15_recount.py` is the newest and the one to run first.** It re-derives every numeric cell of

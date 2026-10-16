@@ -112,7 +112,9 @@ def prop8(text: str, tb) -> None:
     want("旧命题名已消失", "exact quantile relation" not in text)
     want("旧限定句已消失", "still lies inside the noise component" not in text)
     want("新命题名在稿", "**Proposition 3 (noise-dominated lower-tail relation).**" in text)
-    want("亏项式在稿", "F_0(x_q)\\;=\\;\\frac{q}{\\pi_0}" in text)
+    # ⚠️ R23 把 §4.2–§5.1 的 CDF 家族从 $F$ 重命名为 $\Psi$（与频点计数 $F=33$ 消歧），
+    #    本条探针原锚 `F_0(x_q)\;=\;\frac{q}{\pi_0}`，已同步改为 $\Psi_0$。
+    want("亏项式在稿", "\\Psi_0(x_q)\\;=\\;\\frac{q}{\\pi_0}" in text)
     want("Fig. 2 题注已改", "chi-square lower-tail relation" in text)
     want("Algorithm 1 注释已改", "lower-tail inversion" in text)
 
