@@ -308,12 +308,28 @@ def main() -> None:
     ms = pathlib.Path(a.manuscript)
     text = ms.read_text()
     tb = tables(ms)
+    tb_raw = dict(tb)   # R14 垫片必须从未被 _R8_TAB 改写过的原表取值
 
     # —— R8 表号整体重排后的兼容垫片（旧号 -> 新号），见 verify_r5.py 同名注释 ——
     _R8_TAB = {19: 23, 20: 24, 21: 25, 22: 26, 23: 19, 24: 20, 25: 27, 26: 28,
                27: 29, 28: 30, 29: 31, 30: 32, 31: 33, 32: 34, 33: 35, 34: 36,
                35: 37, 36: 38, 37: 39, 38: 40, 39: 21, 40: 41, 41: 42}
     tb.update({o: tb[n] for o, n in _R8_TAB.items() if n in tb})
+
+    # —— R14 兼容垫片：§10 四表（R8 号 19–22）入附录占 42–45，其余 ≥23 减 4。
+    def _r14(n: int) -> int:
+        return n + 23 if 19 <= n <= 22 else (n - 4 if n >= 23 else n)
+    _R14_TAB = {o: _r14(n) for o, n in _R8_TAB.items()}
+    tb.update({o: tb_raw[n] for o, n in _R14_TAB.items() if n in tb_raw})
+    # —— R14c 兼容垫片：§8.6 的 Table 12 也搬进附录，全文 ≥13 的表号再 -1。
+    #    在上一层（R14）结果上平移，仍然只挂号、不改断言。
+    _R14C_TAB = {o: (v - 1 if v >= 13 else v) for o, v in _R14_TAB.items()}
+    tb.update({o: tb_raw[v] for o, v in _R14C_TAB.items() if v in tb_raw})
+    # —— R14c：全文 ≥13 的表号再 -1。上面 _R8_TAB/_R14_TAB 覆盖的是"旧号"键；
+    #    本脚本还有**直接按当时号索引**的键（如 r5 的 tb[15]/tb[17]、r7 的 tb[15]），
+    #    它们不在 _R8_TAB 里，按同一条规则平移。
+    tb.update({n: tb_raw[n - 1] for n in list(tb)
+               if n >= 13 and n not in _R8_TAB and (n - 1) in tb_raw})
     hdr, A = archive()
 
     print(f"手稿 {ms}  |  归档 real_results.json  n_seeds={hdr['n_seeds']}")

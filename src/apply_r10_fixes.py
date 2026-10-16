@@ -47,8 +47,8 @@ E = [
     # ---------------------------------------------------------------- 3 §11 第四条
     (
         "§11 第四条：把结构化源的 20% 错误率从 §A.8 提到正文",
-        r"*Fourth*, on structured sources with overlap above $2.3$ the method is no better than a hand-tuned fixed threshold (Section 8.7).",
-        r"*Fourth*, on structured sources with overlap above $2.3$ the method is no better than a hand-tuned fixed threshold (Section 8.7), and this is where the guard's decision errors concentrate: $8$ of its $40$ decisions on structured sources, a rate of $20\%$, against $2.7\%$ on the sparse ladder (Table 29).",
+        r"*Fourth*, on structured sources with overlap above $2.3$ the method is no better than a hand-tuned fixed threshold (Section 8.6).",
+        r"*Fourth*, on structured sources with overlap above $2.3$ the method is no better than a hand-tuned fixed threshold (Section 8.6), and this is where the guard's decision errors concentrate: $8$ of its $40$ decisions on structured sources, a rate of $20\%$, against $2.7\%$ on the sparse ladder (Table 29).",
     ),
     # ---------------------------------------------------------------- 4 §4.2 谱/条件数
     # 2x2 单位对角 Gram（两列夹角 θ）的本征值是 1±cos θ，故条件数

@@ -1,0 +1,623 @@
+{
+ "tables": {
+  "1": {
+   "caption": "Reference-scale ratio $r(p)=\\mathrm{median}(e)/\\nu$ ($N=4$, $M=2$, SNR $=20$ dB,",
+   "n_rows": 6,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 20,
+   "mismatch": [],
+   "unmatched": [
+    {
+     "row": "0.20",
+     "col": "noise mass $\\ge1/2$",
+     "text": "no ($\\pi_0<1/2$)",
+     "why": "multi-valued, no parser declared"
+    }
+   ]
+  },
+  "2": {
+   "caption": "Properties of the blind noise-floor estimator ($N=4$, $M=2$, SNR $=20$ dB in the",
+   "n_rows": 6,
+   "n_cols": [
+    5
+   ],
+   "status": "ok",
+   "cells_matched": 24,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "3": {
+   "caption": "Monte Carlo verification of the calibrated multiple ($2\\times10^{6}$ noise reali",
+   "n_rows": 6,
+   "n_cols": [
+    4
+   ],
+   "status": "ok",
+   "cells_matched": 6,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "4": {
+   "caption": "Retention diagnostics. \"keep\" is the fraction of candidates surviving the gate; ",
+   "n_rows": 6,
+   "n_cols": [
+    4
+   ],
+   "status": "skipped",
+   "note": "自检诊断表：多为区间与决策字符串（keep/preferred/decision），非纯数值"
+  },
+  "5": {
+   "caption": "Complete hyperparameter listing; six free quantities, all fixed once for the who",
+   "n_rows": 6,
+   "n_cols": [
+    3
+   ],
+   "status": "skipped",
+   "note": "超参数清单，无对应记录"
+  },
+  "6": {
+   "caption": "Mixing-matrix angle error (degrees, lower is better) and SDR (dB); 10 seeds, SNR",
+   "n_rows": 10,
+   "n_cols": [
+    7,
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 60,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "7": {
+   "caption": "Runtime per problem (seconds, one CPU core, mean of 10 seeds per regime; the med",
+   "n_rows": 1,
+   "n_cols": [
+    5
+   ],
+   "status": "ok",
+   "cells_matched": 5,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "8": {
+   "caption": "Angle error (degrees) versus SNR; ten seeds per cell. The nominal SNR follows th",
+   "n_rows": 11,
+   "n_cols": [
+    5
+   ],
+   "status": "ok",
+   "cells_matched": 30,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "9": {
+   "caption": "Angle error (degrees) versus $M$; ten seeds per cell.",
+   "n_rows": 9,
+   "n_cols": [
+    5
+   ],
+   "status": "ok",
+   "cells_matched": 27,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "10": {
+   "caption": "Angle error (degrees) versus $N$; ten seeds per cell.",
+   "n_rows": 8,
+   "n_cols": [
+    5
+   ],
+   "status": "ok",
+   "cells_matched": 24,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "11": {
+   "caption": "Angle error (degrees) with the conventional gate and with the NF gate, front end",
+   "n_rows": 6,
+   "n_cols": [
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "12": {
+   "caption": "Angle error (degrees) on structured sources (SNR $=20$ dB).",
+   "n_rows": 4,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 12,
+   "mismatch": [],
+   "unmatched": [
+    {
+     "row": "linear chirps",
+     "col": "overlap",
+     "text": "2.40"
+    },
+    {
+     "row": "harmonic stacks",
+     "col": "overlap",
+     "text": "2.34"
+    },
+    {
+     "row": "AM–FM tones",
+     "col": "overlap",
+     "text": "2.33"
+    },
+    {
+     "row": "impulse trains",
+     "col": "overlap",
+     "text": "2.05"
+    }
+   ]
+  },
+  "13": {
+   "caption": "Measured structure of the real-speech configurations (means over 8 seeds).",
+   "n_rows": 15,
+   "n_cols": [
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 89,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "14": {
+   "caption": "Mixing-matrix angle error (degrees, mean over 8 seeds) and SDR (dB) on real spee",
+   "n_rows": 16,
+   "n_cols": [
+    9
+   ],
+   "status": "ok",
+   "cells_matched": 112,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "15": {
+   "caption": "Quality of the points that pass the collinearity test, by energy octave (win 102",
+   "n_rows": 6,
+   "n_cols": [
+    9
+   ],
+   "status": "ok",
+   "cells_matched": 48,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "16": {
+   "caption": "Angle error (degrees, eight seeds) when the admitted directions are weighted by ",
+   "n_rows": 16,
+   "n_cols": [
+    8
+   ],
+   "status": "ok",
+   "cells_matched": 112,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "17": {
+   "caption": "The same comparison on the synthetic ladder (eight seeds). The fourth column is ",
+   "n_rows": 7,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "18": {
+   "caption": "Detection quality of the mask itself on the synthetic ladder (means over six reg",
+   "n_rows": 5,
+   "n_cols": [
+    10
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "19": {
+   "caption": "The same scoring on real speech (means over fifteen configurations and four seed",
+   "n_rows": 5,
+   "n_cols": [
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 30,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "20": {
+   "caption": "Sensitivity of the retention criterion to its single threshold, over the 27 cond",
+   "n_rows": 6,
+   "n_cols": [
+    9
+   ],
+   "status": "skipped",
+   "note": "r2_eta_sweep 的 64 格已在 R14c 轮全量对过"
+  },
+  "21": {
+   "caption": "The blind noise-floor estimator against the lower-tail cap. Left block: $\\hat\\si",
+   "n_rows": 6,
+   "n_cols": [
+    10
+   ],
+   "status": "ok",
+   "cells_matched": 47,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "22": {
+   "caption": "Cost of the front end, single core, median over repetitions, with the total time",
+   "n_rows": 7,
+   "n_cols": [
+    5
+   ],
+   "status": "skipped",
+   "note": "r2_runtime 已对过（gate subtotal 0.51ms/0.66%、4.09ms/0.17%，份额逐行复核）"
+  },
+  "23": {
+   "caption": "Paired contrasts with intervals, effect sizes and multiplicity corrections. Diff",
+   "n_rows": 7,
+   "n_cols": [
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "24": {
+   "caption": "Where the retention criterion's 17 material errors lie, and what its three claus",
+   "n_rows": 5,
+   "n_cols": [
+    4
+   ],
+   "status": "ok",
+   "cells_matched": 15,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "25": {
+   "caption": "DBSCAN pre-screening ($\\texttt{min\\_samples}=10$) followed by spherical $k$-mean",
+   "n_rows": 3,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "26": {
+   "caption": "Three noise-floor estimators in the same gate. \"stationarity\" is the across-freq",
+   "n_rows": 9,
+   "n_cols": [
+    8
+   ],
+   "status": "ok",
+   "cells_matched": 59,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "27": {
+   "caption": "Classes of reference scale for the energy gate. The table classifies the *forms*",
+   "n_rows": 5,
+   "n_cols": [
+    4
+   ],
+   "status": "skipped",
+   "note": "参考尺度分类表，无数值"
+  },
+  "28": {
+   "caption": "Density fronts as head-to-head competitors on the synthetic ladder (ten seeds, i",
+   "n_rows": 6,
+   "n_cols": [
+    8
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "29": {
+   "caption": "The same design on the real-speech subset used for the mechanism measurements (f",
+   "n_rows": 5,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "30": {
+   "caption": "The reference-scale ratio $r=\\mathrm{median}(e)/\\nu$ under three mixing matrices",
+   "n_rows": 6,
+   "n_cols": [
+    6
+   ],
+   "status": "skipped",
+   "note": "r5_complex 的六制度 × 三列 + σ̂²/σ² 已全量对过"
+  },
+  "31": {
+   "caption": "Quality of the real-valued collinearity criterion of Proposition 2 under the thr",
+   "n_rows": 3,
+   "n_cols": [
+    5
+   ],
+   "status": "ok",
+   "cells_matched": 12,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "32": {
+   "caption": "Six masks evaluated with the complex-domain clustering machine, on the complex f",
+   "n_rows": 6,
+   "n_cols": [
+    10
+   ],
+   "status": "ok",
+   "cells_matched": 54,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "33": {
+   "caption": "Sensitivity of the gate to $\\alpha$ at the four cells where the floor estimate i",
+   "n_rows": 4,
+   "n_cols": [
+    7
+   ],
+   "status": "skipped",
+   "note": "r5_alpha_cell 由 verify_r5.py 的 alpha_cells() 逐格对（四格 × 五 α × 三个量）；R15 给该表补了 α=10^-2 列并改为升序，verify_r5 的 M36_ALPHAS 已同步"
+  },
+  "34": {
+   "caption": "Cost of the blind floor estimate against the length $n=FT$ of the energy vector.",
+   "n_rows": 6,
+   "n_cols": [
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 36,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "35": {
+   "caption": "Per-band noise floor in the same gate and the same criteria as Section 5.4 (ener",
+   "n_rows": 12,
+   "n_cols": [
+    5
+   ],
+   "status": "ok",
+   "cells_matched": 36,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "36": {
+   "caption": "Signal-to-interference ratio (dB, higher is better) on real speech, on the same ",
+   "n_rows": 16,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 64,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "37": {
+   "caption": "Configuration means of the three metrics on the same runs. The angle-error row r",
+   "n_rows": 3,
+   "n_cols": [
+    6
+   ],
+   "status": "skipped",
+   "note": "Table 14 / 36 的均值行，check_tables.py 已覆盖"
+  },
+  "38": {
+   "caption": "The lower-tail model on recorded room noise (six rooms, eight-microphone REVERB ",
+   "n_rows": 6,
+   "n_cols": [
+    5
+   ],
+   "status": "skipped",
+   "note": "r8_real_room 已全量对过（六房间 × 四列）"
+  },
+  "39": {
+   "caption": "Median relative deviation (per cent) of the signal energy under the mean-eigenva",
+   "n_rows": 4,
+   "n_cols": [
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 10,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "40": {
+   "caption": "The real-speech comparison on two corpora. Mean mixing-matrix angle error in deg",
+   "n_rows": 2,
+   "n_cols": [
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "41": {
+   "caption": "The calibrated gate under six noise laws, all second-moment matched to $\\mathrm{",
+   "n_rows": 6,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "42": {
+   "caption": "Angle error (degrees) against the minimum column separation, by method and activ",
+   "n_rows": 6,
+   "n_cols": [
+    5
+   ],
+   "status": "ok",
+   "cells_matched": 0,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "43": {
+   "caption": "Automatic order selection from the mask. The potential-function peak detector (t",
+   "n_rows": 4,
+   "n_cols": [
+    7
+   ],
+   "status": "ok",
+   "cells_matched": 24,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "44": {
+   "caption": "Angle error (degrees) when the clustering is given $\\hat N=N+d$ columns, on the ",
+   "n_rows": 3,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 15,
+   "mismatch": [],
+   "unmatched": []
+  },
+  "45": {
+   "caption": "Mean and worst-regime angle error over the ladder, versus $\\alpha$ (ten seeds pe",
+   "n_rows": 3,
+   "n_cols": [
+    6
+   ],
+   "status": "ok",
+   "cells_matched": 15,
+   "mismatch": [],
+   "unmatched": []
+  }
+ },
+ "cells_matched": 986,
+ "cells_mismatched": 0,
+ "cells_unmatched": 5,
+ "record_tables": {
+  "guard_validation": [
+   4
+  ],
+  "nfr_results": [
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   45
+  ],
+  "prop6_convention": [
+   1
+  ],
+  "r10_gram_spectrum": [
+   39
+  ],
+  "r10_real_slr70": [
+   40
+  ],
+  "r2_angle_sweep": [
+   42
+  ],
+  "r2_eta_sweep": [
+   20
+  ],
+  "r2_noise_family": [
+   41
+  ],
+  "r2_qmax_sweep": [
+   21
+  ],
+  "r2_runtime": [
+   22
+  ],
+  "r2_ssp_quality": [
+   18
+  ],
+  "r2_ssp_quality_real": [
+   19
+  ],
+  "r2_stats": [
+   23
+  ],
+  "r3_tau_mc": [
+   3
+  ],
+  "r4_density_frontend": [
+   25
+  ],
+  "r4_guard_errors": [
+   24
+  ],
+  "r4_robust_floor": [
+   26
+  ],
+  "r4_table2": [
+   2
+  ],
+  "r5_alpha_cell": [
+   33
+  ],
+  "r5_band_floor": [
+   35
+  ],
+  "r5_complex": [
+   30,
+   31,
+   32
+  ],
+  "r5_density_baseline": [
+   28
+  ],
+  "r5_density_real": [
+   29
+  ],
+  "r5_source_number": [
+   43
+  ],
+  "r5_unified_weight": [
+   16
+  ],
+  "r6_quantile_cost": [
+   34
+  ],
+  "r8_n_mismatch": [
+   44
+  ],
+  "r8_real_room": [
+   38
+  ],
+  "real_grid": [
+   13
+  ],
+  "real_mechanism": [
+   15
+  ],
+  "real_results": [
+   13,
+   14,
+   36,
+   37
+  ],
+  "weighted_variant": [
+   17
+  ]
+ }
+}

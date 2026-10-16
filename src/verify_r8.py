@@ -71,6 +71,18 @@ def main() -> None:
     a = ap.parse_args()
     text = pathlib.Path(a.manuscript).read_text()
     tb = parse_tables(text)
+    tb_raw = dict(tb)
+
+    # —— 表号平移垫片（两次；本脚本按 R13 号索引，只挂号、不改断言）——
+    # R14 ：§10 的四张表（19–22）随整节搬进附录末尾，占 42–45；其余 ≥23 的表号 -4。
+    # R14c：§8.6 的 Table 12 也搬进附录，全文 ≥13 的表号再 -1。
+    def _r14(n: int) -> int:
+        return n + 23 if 19 <= n <= 22 else (n - 4 if n >= 23 else n)
+
+    def _now(n: int) -> int:
+        v = _r14(n)
+        return v - 1 if v >= 13 else v
+    tb.update({n: tb_raw[_now(n)] for n in list(tb) if _now(n) in tb_raw})
 
     MM = json.load(open(RES / "r8_n_mismatch.json"))
     NF = json.load(open(RES / "r2_noise_family.json"))
@@ -163,11 +175,15 @@ def main() -> None:
 
     # ---------------------------------------------------------------- D
     print("\n=== D. 结构与编号 ===")
-    for probe in ("## 10. Robustness of the calibration", "### 10.1 Departures from the Gaussian",
-                  "### 10.2 Sensitivity to the conditioning",
-                  "### 10.3 The gate's strictness", "### 10.4 Sensitivity to the assumed source number",
+    # R14：§10.1–§10.5 整节搬进附录成为 A.21–A.25，正文只留摘要节（标题保留）。
+    for probe in ("## 10. Robustness of the calibration",
+                  "### A.21 Departures from the Gaussian",
+                  "### A.22 Sensitivity to the conditioning",
+                  "### A.23 The gate's strictness", "### A.24 Sensitivity to the assumed source number",
+                  "### A.25 A real recorded room",
                   "## 11. Discussion and Limitations", "## 12. Conclusion"):
         want(f"  {probe[:46]!r} 在", probe in text)
+    want("  正文已无 10.1 小节标题", "### 10.1 " not in text.split("## Appendix A.")[0])
     secs = [int(x) for x in re.findall(r"(?m)^### A\.(\d+) ", text)]
     # 只断言"连续无重复"，不写死张数——写死 N 是本项目反复误报的根源（见 MEMORY）。
     want(f"附录小节编号连续（共 {len(secs)} 节，A.1..A.{max(secs)}）",
@@ -179,10 +195,13 @@ def main() -> None:
     want(f"图题注编号连续（共 {len(figs)} 张）",
          figs == list(range(1, len(figs) + 1)), str(figs))
     i_app = text.index("## Appendix A.")
+    # R14 起这五个研究的本体在附录里（A.21–A.25），正文只剩 §10 的摘要段。
     for title in ("Departures from the Gaussian noise law",
                   "Sensitivity to the conditioning of the mixing matrix",
-                  "The gate's strictness and automatic order selection"):
-        want(f"  附录不再含 {title[:34]!r}", title not in text[i_app:])
+                  "The gate's strictness and automatic order selection",
+                  "Sensitivity to the assumed source number", "A real recorded room"):
+        want(f"  附录含 {title[:34]!r}", title in text[i_app:])
+    want("  正文保留指向 A.21–A.25 的摘要", "Appendix A.21–A.25" in text)
 
     # ---------------------------------------------------------------- E
     print("\n=== E. 归档可用性 ===")
@@ -209,7 +228,7 @@ def main() -> None:
                   and close(num(row[3]), rec["tail_ratio"]["0.05"], 5e-5)
                   and close(num(row[4].split("/")[0]), bt["median"], 5e-4))
             want(f"  行{i+1} {rec['room']} 四格", ok, " | ".join(row[1:]))
-    for probe in ("### 10.5 A real recorded room",
+    for probe in ("### A.25 A real recorded room",
                   "### A.18 The noise floor of a real recorded room",
                   "OpenSLR SLR28", "$0.927$ and $0.991$", "$38$ to $61$ dB",
                   "no source is emitting"):

@@ -77,7 +77,7 @@ def main() -> int:
 
     # ---------- Table 14：两个最优系数列，逐行 ----------
     print("\n[Table 14] optimal te / optimal c（逐行 vs real_grid.json 的 star）")
-    rows = table_rows(text, "**Table 14.**")
+    rows = table_rows(text, "**Table 13.**")
     rows = [r for r in rows if r[1].strip() in CONF]
     want(f"Table 14 行数 = 15", len(rows) == 15, f"实为 {len(rows)}")
     bad14 = []
@@ -90,7 +90,7 @@ def main() -> int:
 
     # ---------- Table 15：三个 tuned 列 + 均值行，逐行 ----------
     print("\n[Table 15] median-opt / max-opt / top-K-opt（逐行 vs real_results.json）")
-    rows = table_rows(text, "**Table 15.**")
+    rows = table_rows(text, "**Table 14.**")
     data = [r for r in rows if r[1].strip() in CONF]
     mean = [r for r in rows if "mean" in r[1]]
     want("Table 15 行数 = 15", len(data) == 15, f"实为 {len(data)}")

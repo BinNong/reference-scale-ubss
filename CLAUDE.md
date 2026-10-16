@@ -68,9 +68,14 @@ python experiments_nfr.py --out ../results/nfr_results.json                     
 python experiments_real.py --out ../results/real_results.json --grid-out ../results/real_grid.json
 python experiments_real.py --corpus <SLR70> --out ../results/r10_real_slr70.json --grid-out ../results/r10_real_slr70_grid.json
 bash r2_run.sh      # robustness suite; honours PYTHON= and W=, logs to ../logs/
-bash r4_run.sh      # Tables 27–30 + the front-end study
-bash r5_run.sh      # Tables 31–39, Fig. 11; sets R5_NO_SDR=1
+bash r4_run.sh      # Tables 2, 24, 26
+bash r5_run.sh      # Tables 16, 28–29, 33, 35, 43; sets R5_NO_SDR=1
 ```
+
+**Table numbers above are the current ones.** R14–R14c moved §10 → A.21–A.25 and §8.6/§8.8 →
+A.26/A.27 and shifted the numbering twice (all tables ≥23 by −4, then ≥13 by −1). Any
+table/figure number written down before 2026-10-06 is suspect. `src/r15_recount.py` recomputes
+every table from its record and is the authority on both the numbers and the mapping.
 
 `r4_run.sh` and `r5_run.sh` hardcode `../.venv/bin/python` and (for `r5`) a server-side `cd`,
 so they only work as written on the compute host.
@@ -94,22 +99,56 @@ Run after every manuscript edit. Appliers run from the **repository root**; `ver
 
 ```bash
 for f in src/apply_*.py; do python3 "$f" --dry; done          # applier idempotence
+python3 src/r15_recount.py                                    # EVERY table against its record
 python3 src/check_tables.py paper/manuscript.md               # every "mean" row vs. its column
+python3 src/check_refs.py                                     # dangling refs, numbering gaps, forward refs
 cd src
-for v in verify_revision.py verify_r4.py verify_r5.py verify_r6.py verify_r7.py verify_r8.py verify_r9.py verify_r10.py; do python3 $v; done
+for v in verify_revision.py verify_r4.py verify_r5.py verify_r6.py verify_r7.py verify_r8.py verify_r9.py verify_r10.py verify_r21.py; do python3 $v; done
 ```
+
+**`r15_recount.py` is the newest and the one to run first.** It re-derives every numeric cell of
+every table from `results/*.json` and prints each mismatch with its row, column and record key.
+`check_refs.py` only sees whether a `Table N` exists; it cannot see that the table is now about
+something else, which is exactly the failure R14's three renumbering passes produced (11 wrong
+table references survived both `check_refs` and every `verify_*`). Two rules learned the hard way
+while writing it: **match keys by exact normalized equality, never substring** — `a in b` matched
+`$N=5$` to `win 512` because "n5" is a substring of "win512", and `$\hat N<N$` to `$\hat N>N$`
+once `<` and `>` were stripped — and **one markdown table per caption, split on blank lines**, or
+Table 6's angle-error block and its SDR block collide.
 
 `verify_*.py` **parse the manuscript for literal values** rather than hardcoding them, and each
 supports `--manuscript <path>` for negative testing — a verifier that cannot fail is worthless,
-so prove it bites. `validate_guard.py`, `validate_nfr.py` and `r2_stats.py` need only the
-records and can be run without the manuscript at all.
+so prove it bites. `validate_guard.py`, `r15_recount.py` and `r2_stats.py` need only the records
+and can be run without the manuscript at all. (`validate_nfr.py` is retired as of R15 — it
+imported a function that no longer exists and described the power-law regression §5.1 refuses;
+its file is now a pointer to the three checks that replaced it.)
+
+`check_refs.py` covers a layer none of the above does: dangling references (a label referenced
+but never defined — it caught Proposition 5, cited three times and absent), numbering gaps,
+**duplicate section numbers**, figure-citation order, non-existent `Section N.M` /
+`Appendix A.N` targets **including enumerated forms** (`Sections 8.6 and 8.8` — the first version
+only parsed the leading member and missed §8.8 entirely), forward
+references. A forward reference carrying an explicit pointer — `(Proposition 2, Section 4.3)` —
+is normal scholarly practice and passes; a bare one used as a premise before its definition is not
+(that is how the misplaced Assumptions block in §6 went unnoticed until §4.2's Proposition 1
+already rested on A2; both were Proposition 7 and 6 before the R20 renumbering). Run it after every section move or renumbering. Its F check compares each
+`Table N` mention against the words in that table's own caption, which is what catches "a
+correct-looking old number now points at a table about something else" — the class of error all
+of A–E sailed straight through R14's three renumbering passes.
+
+`check_readme_map.py` is the same idea for the public README: it parses the *Records → scripts*
+table and compares every `Table N` in it against the mapping `r15_recount.py` derives from the
+extractors. The manuscript promises in §7 and in Declarations that the README names every record
+and maps each table and figure to the script and record that produce it; before R15 that table
+was 14 records stale.
 
 ### Build the PDF
 
 ```bash
 python3 src/build_pdf.py --repo <URL>           # generic review PDF
 python3 src/build_pdf_cssp.py --repo <URL>      # CSSP submission PDF (anonymised + Springer refs)
-python3 src/pack_submission.py                  # rebuilds both, then the LaTeX + upload bundles
+python3 src/build_pdf_sn.py --repo <URL>        # Springer sn-jnl class, third build
+python3 src/pack_submission.py                  # rebuilds them, then the LaTeX + upload bundles
 ```
 
 `build_pdf.py` needs `pandoc` + `xelatex`, and **it re-checks the finished PDF**: table and

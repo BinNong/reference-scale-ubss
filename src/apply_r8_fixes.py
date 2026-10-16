@@ -48,7 +48,7 @@ E: list[tuple[str, str, str]] = [
  "others with a common probability $p$, so that the number of active sources follows the binomial law "
  "$\\pi_J=\\binom{N}{J}p^{J}(1-p)^{N-J}$. This is the model under which the mixture law of Section 4.2 is derived and "
  "under which $p^\\star=1-2^{-1/N}$ is the probability-mass boundary; it is realised by the generators of Section 7, "
- "and it is the idealisation that the structured-source experiment of Section 8.7 and the real-speech measurements of "
+ "and it is the idealisation that the structured-source experiment of Section 8.6 and the real-speech measurements of "
  "Section 9.2 probe."),
 
 ("§11：把 exact 归给边界，把 r(p) 归给半解析近似",
@@ -74,8 +74,8 @@ E: list[tuple[str, str, str]] = [
  "**2. A blind, false-admission-calibrated gate.**"),
 
 ("贡献 2 末尾：限定 blind 的所指",
- "so that the rule requires no per-condition tuning (Section 8.6).",
- "so that the rule requires no per-condition tuning (Section 8.6). \"Blind\" here qualifies the noise floor and the "
+ "so that the rule requires no per-condition tuning (A.26).",
+ "so that the rule requires no per-condition tuning (A.26). \"Blind\" here qualifies the noise floor and the "
  "multiple only: like every method compared in this paper, the rule is given the source number $N$."),
 
 ("Algorithm 1 题注：self-calibrating → false-admission-calibrated",

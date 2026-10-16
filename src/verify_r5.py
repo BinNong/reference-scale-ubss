@@ -220,7 +220,9 @@ def complex_study(tb) -> None:
 
 # ------------------------------------------------------- 4. Table 36（α）
 M36_CELLS = [("tf_p20", 0.0), ("tf_p20", 10.0), ("tf_p10", 0.0), ("tf_p40", 0.0)]
-M36_ALPHAS = [0.1, 0.001, 1e-5, 1e-4]        # 表头给出的列序
+# R15 起该表补入 α=10^{-2} 一列并改为升序（原列序 10^{-1},10^{-3},10^{-5},10^{-4}
+# 非单调，且漏掉的 10^{-2} 恰在两个格上是最优）。列序改了就改这里，不要去改稿件。
+M36_ALPHAS = [0.1, 0.01, 0.001, 0.0001, 1e-05]   # 表头给出的列序
 
 
 def alpha_cells(tb) -> None:
@@ -345,6 +347,7 @@ def main() -> None:
     print(f"手稿：{MS}")
     print("=" * 80)
     tb = tables(MS)
+    tb_raw = dict(tb)   # R14 垫片必须从未被 _R8_TAB 改写过的原表取值
 
     # —— R8 表号整体重排后的兼容垫片 ——
     # R8 把旧 23/24/39 提到正文 §10（新 19/20/21），其余附录表整体移号。
@@ -353,6 +356,23 @@ def main() -> None:
                27: 29, 28: 30, 29: 31, 30: 32, 31: 33, 32: 34, 33: 35, 34: 36,
                35: 37, 36: 38, 37: 39, 38: 40, 39: 21, 40: 41, 41: 42}
     tb.update({o: tb[n] for o, n in _R8_TAB.items() if n in tb})
+
+    # —— R14 兼容垫片：§10 的四张表（R8 号 19–22）随整节搬进附录末尾，占 42–45；
+    #    其余 ≥23 的表号统一 -4（23–45 -> 19–41）。故 R8 号 -> R14 号分三种：
+    #    19–22 加 23、≥23 减 4、其余不变。同样只挂号、不改断言。
+    def _r14(n: int) -> int:
+        return n + 23 if 19 <= n <= 22 else (n - 4 if n >= 23 else n)
+    _R14_TAB = {o: _r14(n) for o, n in _R8_TAB.items()}
+    tb.update({o: tb_raw[n] for o, n in _R14_TAB.items() if n in tb_raw})
+    # —— R14c 兼容垫片：§8.6 的 Table 12 也搬进附录，全文 ≥13 的表号再 -1。
+    #    在上一层（R14）结果上平移，仍然只挂号、不改断言。
+    _R14C_TAB = {o: (v - 1 if v >= 13 else v) for o, v in _R14_TAB.items()}
+    tb.update({o: tb_raw[v] for o, v in _R14C_TAB.items() if v in tb_raw})
+    # —— R14c：全文 ≥13 的表号再 -1。上面 _R8_TAB/_R14_TAB 覆盖的是"旧号"键；
+    #    本脚本还有**直接按当时号索引**的键（如 r5 的 tb[15]/tb[17]、r7 的 tb[15]），
+    #    它们不在 _R8_TAB 里，按同一条规则平移。
+    tb.update({n: tb_raw[n - 1] for n in list(tb)
+               if n >= 13 and n not in _R8_TAB and (n - 1) in tb_raw})
     need = [15, 17, 31, 32, 33, 34, 35, 36, 37, 38, 39]
     missing = [n for n in need if n not in tb]
     if missing:

@@ -122,7 +122,7 @@ def main() -> int:
 
     # ---------------------------------------------------------- C. 20% / 2.7% 与 Table 29 一致
     print("\n--- C. §11 引用的 20% / 2.7% 必须与 Table 29 逐行相符 ---")
-    rows = table_rows(t, "**Table 29.**")
+    rows = table_rows(t, "**Table 24.**")
     by_family: dict[str, list[str]] = {}
     for r in rows:
         if len(r) >= 4:
@@ -185,7 +185,7 @@ def main() -> int:
                 ("$J=3$, $M=3$", lambda r: r["J"] == 3 and r["M"] == 3),
                 ("$J=3$, $M=2$", lambda r: r["J"] == 3 and r["M"] == 2),
                 ("$J=4$", lambda r: r["J"] == 4)]
-        tb44 = table_rows(t, "**Table 44.**")
+        tb44 = table_rows(t, "**Table 39.**")
         want("Table 44 解析出 4 行 7 列",
              len(tb44) == 4 and all(len(r) == 7 for r in tb44),
              f"{len(tb44)} 行，列数 {[len(r) for r in tb44]}")
@@ -244,7 +244,7 @@ def main() -> int:
                         win=f"{sum(1 for a, b in zip(nf, cv) if a < b)}/{len(cases)}")
 
         a1, a2 = _summ(RES / "real_results.json"), _summ(p2)
-        tb45 = table_rows(t, "**Table 45.**")
+        tb45 = table_rows(t, "**Table 40.**")
         want("Table 45 解析出 2 行 7 列",
              len(tb45) == 2 and all(len(r) == 7 for r in tb45),
              f"{len(tb45)} 行，列数 {[len(r) for r in tb45]}")
