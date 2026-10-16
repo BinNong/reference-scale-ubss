@@ -21,15 +21,17 @@ __pycache__/
 # 手稿全文（含作者姓名/单位/邮箱）、审稿报告、逐条核查与回复信都是保密材料。
 # 本仓库只发布「代码 + 固定配置 + 机器可读记录 + README」，
 # 这正是稿件可用性声明里承诺的那一组。
+#
+# 2026-10-16 整理：paper/ 顶层只留**一份**成品 PDF（manuscript_cssp.pdf，投稿版）。
+# 历史评审材料（审稿报告、逐轮回复、三份 triage）已移入 paper/reviews/；
+# 通用/IEEE 格式版改由 build_pdf.py 输出到 paper/review/。两处都整目录排除。
 /paper/manuscript*.md
 /paper/manuscript*.pdf
 /paper/main.pdf
-/paper/referee_report_*.md
-/paper/review_report*.md
-/paper/cssp_*_triage.md
+/paper/reviews/
+/paper/review/
 /paper/cssp_title_page.md
 /paper/cover_letter_cssp.md
-/paper/response_to_review_*.md
 # Springer 官方模板：第三方材料（版权归 Springer），复现用不到
 /paper/springer_template/
 

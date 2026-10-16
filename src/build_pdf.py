@@ -19,9 +19,15 @@
     在 \\footnotesize 的等宽字体下约 14.1cm < 16cm 正文宽，故装箱并降字号；超限直接报错。
 
 用法：
-    python3 src/build_pdf.py                    # -> build/manuscript_submission.pdf
+    python3 src/build_pdf.py                    # -> paper/review/manuscript.pdf
     python3 src/build_pdf.py --spacing single   # 单倍行距版本
     python3 src/build_pdf.py --font "Latin Modern Roman"
+
+**输出到子目录，不放顶层**：顶层只保留**一份**成品 —— `paper/manuscript_cssp.pdf`
+（投稿版，由 `build_pdf_cssp.py` 产出）。本脚本产出的是通用/IEEE 格式版，若也放顶层，
+盘上就会有第二份稿件 PDF，作者分不清哪份才是要投的（2026-10-16 整理前正是这样：
+顶层同时躺着 main.pdf、manuscript_sn_jnl.pdf、manuscript_cssp.pdf、
+manuscript_submission.pdf 四份）。
 """
 from __future__ import annotations
 
@@ -919,8 +925,12 @@ def main() -> None:
     if not log:
         die(f"字体组合 {fontsets} 均编译失败；见 build/main.log")
 
-    out = Path(a.out) if a.out else PAPER / (
-        "manuscript_submission.pdf" if a.spacing == "half" else "manuscript_single.pdf")
+    # 顶层只保留一份成品（manuscript_cssp.pdf，投稿版，由 build_pdf_cssp.py 产出）。
+    # 本脚本的通用/IEEE 格式版一律放 paper/review/ 子目录，避免顶层出现第二份
+    # 让人分不清哪个是投稿件的 PDF。
+    out = Path(a.out) if a.out else PAPER / "review" / (
+        "manuscript.pdf" if a.spacing == "half" else "manuscript_single.pdf")
+    out.parent.mkdir(parents=True, exist_ok=True)
     shutil.copy(BUILD / "main.pdf", out)
     if not a.keep:
         for f in ("body.md",):

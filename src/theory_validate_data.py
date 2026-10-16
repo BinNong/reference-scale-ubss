@@ -5,7 +5,7 @@
 验证项：
     D1  单源 / 噪声点的实际占比  vs  二项式预测 pi_s, pi_0
     D2  噪声点上硬阈值的通过率    vs  Corollary 1 的 p_c
-    D3  实际污染比 kappa          vs  Proposition 4
+    D3  实际污染比 kappa          vs  Proposition 8（原 Proposition 4，R20 前编号）
     D4  能量门限在噪声/信号点上的平均权重  vs  Corollary 2
     D5  Davis-Kahan 量级预测中的 O(1) 常数 c 是否稳定（是否真的 O(1)）
 
