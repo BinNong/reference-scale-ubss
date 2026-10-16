@@ -102,11 +102,23 @@ def main() -> int:
     want("全稿再无其它裸 $e^{...}$（欧拉数）",
          re.search(r"\$e\^", t) is None)
 
+    # ---- E. R22：公式 (10) 处的就地指引（用户翻到公式 (10) 没看到解释）----
+    print("\n--- E. 公式 (10) 处的就地指引（R22）---")
+    want("Proposition 1 的 where 从句点名 $e$ 的出处",
+         r"$e$ is the per-point energy of Section 4.1" in t)
+    want("指引子句只出现 1 次", t.count(r"$e$ is the per-point energy of Section 4.1") == 1,
+         f"实为 {t.count(r'$e$ is the per-point energy of Section 4.1')}")
+    want("指引与 R21 的定义句互补（两处都在）",
+         P_DEF in t and r"$e$ is the per-point energy of Section 4.1" in t)
+    want("指引紧跟公式 (10) 之后（同一命题内）",
+         t.index(EQ10_BODY) < t.index(r"$e$ is the per-point energy of Section 4.1")
+         < t.index(r"whose partial moments $m_k$ follow from the chi-square CDF"))
+
     print()
     if FAIL:
         print(f"仍有 {len(FAIL)} 项不一致：{FAIL}")
         return 1
-    print("✓ verify_r21 全部通过")
+    print("✓ verify_r21 全部通过（含 R22 的就地指引）")
     return 0
 
 
