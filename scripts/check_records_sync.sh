@@ -18,7 +18,7 @@ REMOTE_RESULTS="/data/experiment/paper5_ubss_sadun/results"
 ( cd "$ROOT/results" && md5 -r *.json 2>/dev/null | awk '{print $1" "$2}' | sort -k2 ) \
   > /tmp/_loc_hash.txt || { echo "无法读取本地归档"; exit 2; }
 
-/usr/local/bin/python3 - <<'PY'
+"${PYTHON:-python3}" - <<'PY'
 import sys
 def load(p):
     d = {}

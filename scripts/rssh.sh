@@ -44,7 +44,7 @@ if [ "$SSH_USABLE" = "1" ]; then
 fi
 
 if [ ! -x "$PYBIN" ] || ! "$PYBIN" -c 'import paramiko' 2>/dev/null; then
-  echo "本机 ssh 客户端不可用（$probe）" >&2
+  echo "本机 ssh 客户端不可用（${probe}）" >&2
   echo "且 $PYBIN 里没有 paramiko；请先：" >&2
   echo "  $PYBIN -m pip install --trusted-host mirrors.aliyun.com paramiko" >&2
   exit 1
