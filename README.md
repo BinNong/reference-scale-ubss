@@ -134,7 +134,7 @@ no longer matches, so the mapping cannot drift silently.
 | `r5_source_number.json` | `r5_source_number.py` | gate strictness and automatic order selection (Table 43) |
 | `r5_unified_weight.json` | `r5_unified_weight.py` | the gate-plus-weight design: three rules × weighted/unweighted (Table 16, Section 9.5) |
 | `r6_quantile_cost.json` | `r6_quantile_cost.py` | the quantile step against $n=FT$, **re-measured** -- the record behind Table 34 and Appendix A.15 |
-| `r8_n_mismatch.json` | `r8_n_mismatch.py` | source-number mismatch, on the ladder and on real speech (Table 44, Section 10.4) |
+| `r8_n_mismatch.json` | `r8_n_mismatch.py` | source-number mismatch, on the ladder and on real speech (Table 44, Appendix A.24) |
 | `r8_real_room.json` | `r8_real_room.py` | recorded room noise, six rooms of the 2014 REVERB challenge (Table 38, Appendix A.18 and A.25) |
 | `r10_gram_spectrum.json` | `r10_gram_spectrum.py` | sensitivity to the eigenstructure of the active Gram (Table 39, Appendix A.19) |
 | `r10_real_slr70.json` | `experiments_real.py --corpus <SLR70> --grid-out ...` | the second corpus, under the protocol of §9.1 (Table 40, Appendix A.20); `r10_real_slr70_grid.json` holds its tuning grids |
